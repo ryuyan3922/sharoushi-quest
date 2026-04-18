@@ -1,0 +1,2050 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>社労士クエスト ～賢者への道～</title>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+/* =========================================
+   RESET & BASE
+   ========================================= */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: radial-gradient(ellipse at center, #0a0a2a 0%, #000008 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 12px;
+  font-family: 'DotGothic16', 'ＭＳ ゴシック', monospace;
+  color: #fff;
+}
+
+#game {
+  width: 480px;
+  max-width: 100%;
+  position: relative;
+}
+
+/* =========================================
+   DQ WINDOW STYLE
+   ========================================= */
+.dq-win {
+  background: #00004a;
+  border: 3px solid #5577ee;
+  position: relative;
+  padding: 10px 14px;
+}
+.dq-win::before {
+  content: '';
+  position: absolute;
+  top: 3px; left: 3px; right: 3px; bottom: 3px;
+  border: 1px solid rgba(150,180,255,0.25);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* =========================================
+   TITLE SCREEN
+   ========================================= */
+#screen-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  min-height: 600px;
+  background: linear-gradient(180deg, #000008 0%, #00002a 40%, #000018 100%);
+  border: 4px solid #5577ee;
+  padding: 30px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.title-stars {
+  position: absolute;
+  width: 100%; height: 100%;
+  top: 0; left: 0;
+  background-image:
+    radial-gradient(1px 1px at 10% 15%, #fff 0%, transparent 100%),
+    radial-gradient(1px 1px at 25% 35%, #aaf 0%, transparent 100%),
+    radial-gradient(1px 1px at 60% 10%, #fff 0%, transparent 100%),
+    radial-gradient(1px 1px at 80% 25%, #aaf 0%, transparent 100%),
+    radial-gradient(1px 1px at 45% 60%, #fff 0%, transparent 100%),
+    radial-gradient(1px 1px at 90% 70%, #aaf 0%, transparent 100%),
+    radial-gradient(1px 1px at 15% 80%, #fff 0%, transparent 100%),
+    radial-gradient(1px 1px at 70% 85%, #aaf 0%, transparent 100%),
+    radial-gradient(1px 1px at 35% 90%, #fff 0%, transparent 100%),
+    radial-gradient(1px 1px at 55% 45%, #aaf 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.logo-main {
+  font-size: 30px;
+  color: #ffee44;
+  text-shadow: 2px 2px 0 #aa7700, 4px 4px 0 #664400;
+  letter-spacing: 6px;
+  line-height: 1.3;
+  text-align: center;
+  z-index: 1;
+}
+.logo-sub {
+  font-size: 13px;
+  color: #8899ee;
+  letter-spacing: 3px;
+  z-index: 1;
+}
+.hero-char {
+  font-size: 72px;
+  animation: float 2.5s ease-in-out infinite;
+  z-index: 1;
+  filter: drop-shadow(0 0 20px rgba(100,180,255,0.7));
+}
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.title-story {
+  background: rgba(0,0,60,0.8);
+  border: 2px solid #334477;
+  padding: 14px 18px;
+  font-size: 12px;
+  color: #aabbcc;
+  line-height: 2;
+  text-align: center;
+  width: 100%;
+  z-index: 1;
+}
+.title-story span { color: #88aaff; }
+
+/* Title character parade */
+.title-char-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  z-index: 1;
+  width: 100%;
+}
+.title-char-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.title-char-icon {
+  font-size: 32px;
+  animation: float 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(100,180,255,0.6));
+}
+.title-char-icon:nth-child(1) { animation-delay: 0s; }
+.title-char-label {
+  font-size: 9px;
+  color: #6677aa;
+  letter-spacing: 1px;
+}
+
+/* Field map on title */
+.title-map-box {
+  width: 100%;
+  background: rgba(0,0,50,0.7);
+  border: 2px solid #2244aa;
+  padding: 10px 14px;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+.map-node {
+  background: #001040;
+  border: 1px solid #2255aa;
+  padding: 4px 10px;
+  font-size: 10px;
+  color: #7799cc;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.map-node-icon { font-size: 14px; }
+
+/* Pixel decorative border on title */
+.pixel-deco {
+  width: 100%;
+  height: 4px;
+  background: repeating-linear-gradient(90deg, #5577ee 0px, #5577ee 8px, transparent 8px, transparent 16px);
+  z-index: 1;
+  opacity: 0.6;
+}
+
+/* =========================================
+   INTRO SCREEN
+   ========================================= */
+#screen-intro {
+  display: none;
+  flex-direction: column;
+  min-height: 600px;
+  background: #000010;
+  border: 4px solid #5577ee;
+}
+.intro-header {
+  background: #00003a;
+  border-bottom: 2px solid #334488;
+  padding: 6px 16px;
+  font-size: 11px;
+  color: #ffee44;
+}
+.intro-body {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.intro-npc {
+  font-size: 50px;
+  text-align: center;
+  animation: float 2s infinite;
+  filter: drop-shadow(0 0 12px rgba(100,160,255,0.6));
+}
+.intro-text-box {
+  background: #00003a;
+  border: 3px solid #5577ee;
+  padding: 14px 16px;
+  font-size: 13px;
+  line-height: 1.9;
+  color: #eeeeff;
+  white-space: pre-line;
+  flex: 1;
+  animation: fadein 0.5s ease-out;
+}
+@keyframes fadein { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.intro-npc-name {
+  color: #ffaa44;
+  font-size: 11px;
+  margin-bottom: 8px;
+}
+.intro-page-num {
+  text-align: center;
+  font-size: 11px;
+  color: #445566;
+}
+.intro-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 12px 12px;
+}
+
+/* =========================================
+   BATTLE SCREEN
+   ========================================= */
+#screen-battle {
+  display: none;
+  flex-direction: column;
+  border: 4px solid #5577ee;
+  background: #000010;
+}
+
+/* Battle field */
+.battle-field {
+  height: 220px;
+  position: relative;
+  background: linear-gradient(180deg, #000820 0%, #001840 55%, #002a10 100%);
+  overflow: hidden;
+  image-rendering: pixelated;
+}
+.bf-sky {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 60%;
+  background: linear-gradient(180deg, #000415 0%, #001830 100%);
+}
+.bf-ground {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 44%;
+  background: linear-gradient(180deg, #003010 0%, #001a08 100%);
+  border-top: 2px solid #005020;
+}
+/* Pixel tile pattern on ground */
+.bf-ground::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(0,80,30,0.15) 0px, rgba(0,80,30,0.15) 1px,
+    transparent 1px, transparent 16px
+  ), repeating-linear-gradient(
+    0deg,
+    rgba(0,80,30,0.1) 0px, rgba(0,80,30,0.1) 1px,
+    transparent 1px, transparent 16px
+  );
+}
+.bf-stars {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 55%;
+  background-image:
+    radial-gradient(1px 1px at 8% 20%, rgba(255,255,255,0.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 22% 45%, rgba(170,190,255,0.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 50% 15%, rgba(255,255,255,0.9) 0%, transparent 100%),
+    radial-gradient(1px 1px at 75% 38%, rgba(170,190,255,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 88% 22%, rgba(255,255,255,0.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 38% 55%, rgba(200,220,255,0.5) 0%, transparent 100%);
+}
+/* Moon/sun decoration */
+.bf-moon {
+  position: absolute;
+  top: 8px; left: 14px;
+  font-size: 20px;
+  opacity: 0.7;
+  filter: drop-shadow(0 0 6px rgba(255,240,180,0.6));
+  animation: moon-glow 4s ease-in-out infinite alternate;
+}
+@keyframes moon-glow { from{opacity:0.5;} to{opacity:0.9;} }
+/* Field name label */
+.bf-field-label {
+  position: absolute;
+  bottom: 50%; left: 8px;
+  font-size: 9px;
+  color: rgba(80,150,255,0.5);
+  letter-spacing: 1px;
+  transform: translateY(50%);
+}
+
+/* Monster */
+.monster-area {
+  position: absolute;
+  right: 24px;
+  top: 12px;
+  text-align: center;
+  animation: appear 0.4s ease-out;
+}
+@keyframes appear { from { opacity:0; transform:scale(0.6) translateY(10px); } to { opacity:1; transform:scale(1) translateY(0); } }
+.monster-sprite {
+  font-size: 80px;
+  display: block;
+  filter: drop-shadow(0 0 18px rgba(255,120,60,0.7));
+  animation: monster-idle 3s ease-in-out infinite;
+}
+@keyframes monster-idle { 0%,100% { transform:scale(1) translateY(0); } 50% { transform:scale(1.04) translateY(-3px); } }
+.monster-name-tag {
+  font-size: 10px;
+  color: #ffaa44;
+  background: rgba(0,0,0,0.75);
+  border: 1px solid #884400;
+  padding: 1px 8px;
+  margin: 3px auto;
+  display: inline-block;
+}
+.m-hp-bar { width: 90px; height: 7px; background: #330000; border: 1px solid #550000; margin: 3px auto; border-radius: 2px; overflow: hidden; }
+.m-hp-fill { height: 100%; background: linear-gradient(90deg,#dd2222,#ff6633); transition: width 0.5s; }
+
+/* Player */
+.player-area {
+  position: absolute;
+  left: 20px;
+  bottom: 45px;
+  text-align: center;
+}
+.player-sprite {
+  font-size: 46px;
+  display: block;
+  filter: drop-shadow(0 0 10px rgba(80,180,255,0.7));
+  animation: player-idle 4s ease-in-out infinite;
+}
+@keyframes player-idle { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-3px); } }
+.player-label { font-size: 9px; color: #88aacc; margin-top: 2px; }
+
+/* Attack flash */
+.atk-flash {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,220,100,0.35);
+  animation: flash 0.35s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes flash { 0% { opacity:1; } 100% { opacity:0; } }
+.hurt-shake {
+  animation: shake 0.3s ease-out;
+}
+@keyframes shake { 0%,100% { transform:translateX(0); } 25% { transform:translateX(-6px); } 75% { transform:translateX(6px); } }
+
+/* Combo badge */
+.combo-badge {
+  position: absolute;
+  top: 8px; left: 8px;
+  background: rgba(255,200,0,0.92);
+  color: #000;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 2px;
+  display: none;
+  font-weight: bold;
+}
+
+/* =========================================
+   STATUS BAR
+   ========================================= */
+.status-bar {
+  background: #00003a;
+  border-top: 2px solid #334488;
+  border-bottom: 2px solid #334488;
+  padding: 7px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.sb-left { min-width: 130px; }
+.sb-job { color: #ffee44; font-size: 11px; }
+.sb-level { color: #88aaff; font-size: 10px; margin-top: 1px; }
+.sb-mid { display: flex; flex-direction: column; gap: 4px; }
+.bar-row { display: flex; align-items: center; gap: 5px; }
+.bar-lbl { font-size: 10px; width: 18px; }
+.hp-lbl { color: #ff8888; }
+.ex-lbl { color: #88ff88; }
+.bar-outer { width: 72px; height: 9px; background: #110000; border: 1px solid #332200; border-radius: 2px; overflow: hidden; }
+.hp-fill { height:100%; background:linear-gradient(90deg,#dd2222,#ff7700); transition:width 0.5s; }
+.ex-fill { height:100%; background:linear-gradient(90deg,#2244ee,#44ffaa); transition:width 0.5s; }
+.bar-val { font-size: 9px; color: #aabbcc; }
+.sb-right { text-align: right; font-size: 10px; color: #778899; }
+.sb-right span { color: #fff; }
+
+/* =========================================
+   MESSAGE BOX
+   ========================================= */
+.msg-box {
+  background: #00004a;
+  border: 3px solid #5577ee;
+  margin: 8px;
+  padding: 12px 16px;
+  min-height: 74px;
+  font-size: 12px;
+  line-height: 1.75;
+  color: #fff;
+  white-space: pre-line;
+  position: relative;
+}
+.msg-box::before { content:''; position:absolute; top:3px;left:3px;right:3px;bottom:3px; border:1px solid rgba(150,180,255,0.15); pointer-events:none; }
+.msg-cursor { display:inline-block; width:7px; height:13px; background:#fff; animation:blink 0.6s steps(1) infinite; vertical-align:middle; margin-left:3px; }
+@keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
+
+/* =========================================
+   QUESTION AREA
+   ========================================= */
+.q-box {
+  background: #000040;
+  border: 3px solid #4466bb;
+  margin: 0 8px 6px;
+  padding: 10px 14px;
+}
+.q-field-badge {
+  display: inline-block;
+  background: #1a2a55;
+  border: 1px solid #4466aa;
+  color: #88aaff;
+  font-size: 9px;
+  padding: 1px 7px;
+  margin-bottom: 4px;
+  border-radius: 1px;
+}
+.q-type-badge {
+  float: right;
+  font-size: 9px;
+  padding: 1px 7px;
+  border: 1px solid;
+  border-radius: 1px;
+  margin-bottom: 4px;
+}
+.qt-battle { color:#ff8844; border-color:#ff8844; background:#1a0800; }
+.qt-magic  { color:#aa88ff; border-color:#aa88ff; background:#110022; }
+.qt-ritual { color:#44ffaa; border-color:#44ffaa; background:#001a10; }
+.qt-seal   { color:#ffff44; border-color:#ffff44; background:#1a1a00; }
+.qt-scroll { color:#88bbff; border-color:#88bbff; background:#001022; }
+.q-text {
+  font-size: 12px;
+  line-height: 1.8;
+  color: #eeeeff;
+  white-space: pre-line;
+  clear: both;
+}
+
+/* =========================================
+   CHOICES
+   ========================================= */
+.choices { display:flex; flex-direction:column; gap:5px; margin:0 8px 6px; }
+.choice-btn {
+  background: #00003a;
+  border: 2px solid #334488;
+  color: #fff;
+  padding: 7px 12px;
+  font-family: inherit;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  position: relative;
+  padding-left: 26px;
+}
+.choice-btn::before { content:'　'; position:absolute; left:8px; color:transparent; }
+.choice-btn:hover { background:#00228a; border-color:#7799ff; color:#ffee44; }
+.choice-btn:hover::before { content:'▶'; color:#ffee44; }
+.choice-btn.correct { background:#003300; border-color:#44ee44; color:#88ff88; }
+.choice-btn.correct::before { content:'◆'; color:#88ff88; }
+.choice-btn.wrong { background:#330000; border-color:#ee4444; color:#ff8888; }
+.choice-btn.wrong::before { content:'✕'; color:#ff8888; }
+
+/* =========================================
+   ACTION BUTTONS
+   ========================================= */
+.action-row { display:flex; gap:8px; margin:0 8px 6px; justify-content:center; }
+.act-btn {
+  background: #001a55;
+  border: 2px solid #4466bb;
+  color: #99aadd;
+  padding: 8px 18px;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  min-width: 110px;
+  text-align: center;
+}
+.act-btn:hover { background:#002299; border-color:#88aaff; color:#fff; }
+.act-btn.primary { background:#3a1800; border-color:#ffaa44; color:#ffcc77; }
+.act-btn.primary:hover { background:#552200; border-color:#ffcc66; color:#fff; }
+
+/* =========================================
+   EXPLANATION
+   ========================================= */
+.expl-box {
+  background: #000830;
+  border: 2px solid #2255aa;
+  margin: 0 8px 6px;
+  padding: 10px 14px;
+  font-size: 11px;
+  line-height: 1.8;
+  color: #bbccee;
+  white-space: pre-line;
+}
+.expl-title { color:#ffaa44; font-size:10px; margin-bottom:5px; }
+
+/* =========================================
+   RESULT BADGE
+   ========================================= */
+.result-ok  { background:#002800; border:2px solid #44ee44; color:#88ff88; padding:6px 12px; margin:0 8px 6px; text-align:center; font-size:12px; }
+.result-ng  { background:#280000; border:2px solid #ee4444; color:#ff8888; padding:6px 12px; margin:0 8px 6px; text-align:center; font-size:12px; }
+
+/* =========================================
+   NAVIGATION BAR
+   ========================================= */
+.nav-bar { display:flex; border-top:2px solid #334488; }
+.nav-btn { flex:1; background:#000030; border:none; border-right:1px solid #334488; color:#556688; padding:7px 4px; font-family:inherit; font-size:10px; cursor:pointer; transition:all 0.15s; }
+.nav-btn:last-child { border-right:none; }
+.nav-btn:hover { background:#001a55; color:#aaccff; }
+
+/* =========================================
+   STATUS SCREEN
+   ========================================= */
+#screen-status {
+  display: none;
+  flex-direction: column;
+  border: 4px solid #5577ee;
+  background: #000018;
+  padding: 12px;
+  gap: 10px;
+  min-height: 600px;
+}
+.st-title { text-align:center; color:#ffee44; font-size:16px; letter-spacing:4px; border-bottom:2px solid #5577ee; padding-bottom:8px; }
+.st-job-box { background:#00003a; border:3px solid #5577ee; padding:12px; text-align:center; }
+.st-job-name { font-size:18px; color:#ffee44; margin-bottom:4px; }
+.st-char { font-size:36px; }
+.st-section { background:#00003a; border:2px solid #334488; padding:10px 14px; }
+.st-sec-title { font-size:10px; color:#ffaa44; margin-bottom:8px; }
+.st-row { display:flex; justify-content:space-between; font-size:11px; padding:3px 0; border-bottom:1px solid rgba(80,120,160,0.2); }
+.st-row:last-child { border-bottom:none; }
+.st-key { color:#8899bb; }
+.st-val { color:#fff; }
+.field-bar { margin:4px 0; }
+.fb-label { display:flex; justify-content:space-between; font-size:10px; color:#889aaa; margin-bottom:2px; }
+.fb-outer { height:7px; background:#100022; border:1px solid #442266; border-radius:2px; overflow:hidden; }
+.fb-fill { height:100%; background:linear-gradient(90deg,#4444ff,#44aaff); transition:width 0.5s; }
+.next-job-box { font-size:11px; color:#7788bb; line-height:1.9; }
+
+/* =========================================
+   LEVEL-UP OVERLAY
+   ========================================= */
+#overlay-levelup {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,20,0.92);
+  z-index: 200;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+}
+.lu-icon { font-size: 64px; animation: float 1s ease-in-out infinite; }
+.lu-text { font-size: 26px; color: #ffee44; text-shadow: 0 0 22px #ffaa00; animation: pulse 0.5s ease-in-out infinite alternate; }
+@keyframes pulse { from{transform:scale(1);} to{transform:scale(1.08);} }
+.lu-detail { font-size: 14px; color: #aaccff; text-align: center; line-height: 1.7; }
+
+/* =========================================
+   SAVE SCREEN
+   ========================================= */
+#screen-save {
+  display: none;
+  flex-direction: column;
+  border: 4px solid #5577ee;
+  background: linear-gradient(180deg, #000010 0%, #00002a 100%);
+  min-height: 600px;
+}
+.save-header {
+  background: #00003a;
+  border-bottom: 2px solid #5577ee;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.save-title-text { color: #ffee44; font-size: 14px; letter-spacing: 3px; }
+.save-mode-label { font-size: 10px; color: #8899bb; border: 1px solid #334466; padding: 1px 8px; }
+.save-body { padding: 14px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.save-slot {
+  background: #000040;
+  border: 2px solid #334488;
+  padding: 12px 14px;
+  transition: background 0.15s, border-color 0.15s;
+}
+.save-slot.has-data { cursor: pointer; }
+.save-slot.has-data:hover { background: #001060; border-color: #6688cc; }
+.save-slot.empty { border-style: dashed; border-color: #223366; }
+.slot-num { font-size: 10px; color: #ffaa44; margin-bottom: 6px; }
+.slot-char { font-size: 28px; float: right; margin-top: -4px; }
+.slot-job  { font-size: 14px; color: #ffee44; margin-bottom: 3px; }
+.slot-details { font-size: 10px; color: #8899bb; line-height: 1.8; clear: both; }
+.slot-date { font-size: 9px; color: #445566; margin-top: 6px; border-top: 1px solid #223; padding-top: 4px; }
+.slot-empty-text { font-size: 12px; color: #334455; text-align: center; padding: 12px 0; letter-spacing: 2px; }
+.slot-btns { display: flex; gap: 6px; margin-top: 8px; }
+.slot-action-btn {
+  flex: 1;
+  background: #001a55;
+  border: 1px solid #4466bb;
+  color: #99aadd;
+  padding: 5px 8px;
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+.slot-action-btn:hover { background: #002299; border-color: #88aaff; color: #fff; }
+.slot-action-btn.del { background: #300000; border-color: #660000; color: #aa4444; }
+.slot-action-btn.del:hover { background: #550000; border-color: #aa3333; color: #ff6666; }
+.save-info-box {
+  background: #001a00;
+  border: 1px solid #224422;
+  padding: 6px 12px;
+  font-size: 10px;
+  color: #446644;
+  text-align: center;
+  line-height: 1.6;
+}
+.save-footer { padding: 10px 14px; border-top: 2px solid #334488; }
+
+/* Export/Import area */
+.transfer-box {
+  background: #001030;
+  border: 1px solid #2255aa;
+  padding: 10px 14px;
+  font-size: 10px;
+  color: #6677aa;
+  line-height: 1.8;
+}
+.transfer-box-title { color: #88aaff; font-size: 11px; margin-bottom: 6px; }
+.transfer-btns { display: flex; gap: 6px; margin-top: 8px; }
+.transfer-btn {
+  flex: 1;
+  background: #002255;
+  border: 1px solid #3366aa;
+  color: #88aaff;
+  padding: 6px 8px;
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+.transfer-btn:hover { background: #003399; border-color: #6699ff; color: #fff; }
+
+/* Auto-save toast notification */
+.autosave-toast {
+  position: fixed;
+  bottom: 56px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,40,0,0.95);
+  border: 1px solid #228822;
+  color: #88ff88;
+  font-size: 11px;
+  padding: 5px 18px;
+  z-index: 300;
+  display: none;
+  white-space: nowrap;
+  pointer-events: none;
+}
+@keyframes toast-in  { from{opacity:0;transform:translateX(-50%) translateY(8px);} to{opacity:1;transform:translateX(-50%) translateY(0);} }
+@keyframes toast-out { from{opacity:1;} to{opacity:0;} }
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+@media (max-width: 500px) {
+  body { padding: 0; }
+  #game { width: 100%; }
+}
+</style>
+</head>
+<body>
+<div id="game">
+
+<!-- ═══════════════════════════════════════
+     TITLE SCREEN
+═══════════════════════════════════════ -->
+<div id="screen-title">
+  <div class="title-stars"></div>
+  <div class="pixel-deco"></div>
+
+  <!-- Logo -->
+  <div class="logo-main">社労士クエスト</div>
+  <div class="logo-sub">～ 知識の賢者への道 ～</div>
+
+  <!-- Hero character -->
+  <div class="hero-char">⚔️</div>
+
+  <!-- Character parade -->
+  <div class="title-char-row">
+    <div class="title-char-item">
+      <span class="title-char-icon" style="animation-delay:0s;">🧓</span>
+      <span class="title-char-label">長老</span>
+    </div>
+    <div class="title-char-item">
+      <span class="title-char-icon" style="animation-delay:0.4s;">📜</span>
+      <span class="title-char-label">賢者GPT</span>
+    </div>
+    <div class="title-char-item">
+      <span class="title-char-icon" style="animation-delay:0.8s;">🧙‍♂️</span>
+      <span class="title-char-label">冒険者</span>
+    </div>
+    <div class="title-char-item">
+      <span class="title-char-icon" style="animation-delay:1.2s;">🗡️</span>
+      <span class="title-char-label">知識の剣</span>
+    </div>
+    <div class="title-char-item">
+      <span class="title-char-icon" style="animation-delay:1.6s;">🛡️</span>
+      <span class="title-char-label">理解の盾</span>
+    </div>
+  </div>
+
+  <!-- World map -->
+  <div class="title-map-box">
+    <div class="map-node"><span class="map-node-icon">🌲</span>法令の森</div>
+    <div class="map-node"><span class="map-node-icon">⛰️</span>年金の山</div>
+    <div class="map-node"><span class="map-node-icon">🏔️</span>労災の谷</div>
+    <div class="map-node"><span class="map-node-icon">🏰</span>改正の城</div>
+    <div class="map-node"><span class="map-node-icon">⚔️</span>最終試験</div>
+  </div>
+
+  <!-- Story text -->
+  <div class="title-story">
+    「法令の森」「年金の山」「労災の谷」「改正の城」<br>
+    <span>知識の剣を手に、国家試験という名のボスを倒せ！</span><br>
+    賢者GPTがあなたの冒険を導く――
+  </div>
+
+  <!-- Buttons -->
+  <div style="display:flex;flex-direction:column;gap:10px;width:100%;z-index:1;">
+    <button id="btn-load-title" class="act-btn" onclick="showSaveScreen('load')" style="display:none;font-size:13px;padding:11px 36px;letter-spacing:3px;background:#001a44;border-color:#6688cc;">
+      📖 ぼうけんをよむ
+    </button>
+    <button class="act-btn primary" onclick="startIntro()" style="font-size:14px;padding:12px 36px;letter-spacing:4px;">
+      ⚡ NEW GAME　ぼうけんをはじめる
+    </button>
+  </div>
+
+  <div class="pixel-deco"></div>
+  <div style="font-size:10px;color:#334455;">※ 2026年最新試験対応版　|　単一HTMLファイル・どのPCでも動作</div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     INTRO SCREEN
+═══════════════════════════════════════ -->
+<div id="screen-intro">
+  <div class="intro-header">📖 プロローグ</div>
+  <div class="intro-body">
+    <div class="intro-npc" id="intro-npc">🧓</div>
+    <div class="intro-text-box" id="intro-text">
+      <div class="intro-npc-name" id="intro-npc-name">長老</div>
+      <div id="intro-content"></div>
+    </div>
+    <div class="intro-page-num" id="intro-page">1 / 3</div>
+  </div>
+  <div class="intro-footer">
+    <button class="act-btn" onclick="nextIntro()">つぎへ ▶</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SAVE / LOAD SCREEN
+═══════════════════════════════════════ -->
+<div id="screen-save">
+  <div class="save-header">
+    <span class="save-title-text" id="save-screen-title">💾 セーブ</span>
+    <span class="save-mode-label" id="save-mode-label">データを保存する</span>
+  </div>
+  <div class="save-body">
+    <!-- Slot 1 -->
+    <div class="save-slot" id="save-slot-1">
+      <div class="slot-num">📁 第1の書</div>
+      <div class="slot-empty-text">── 空のデータ ──</div>
+    </div>
+    <!-- Slot 2 -->
+    <div class="save-slot" id="save-slot-2">
+      <div class="slot-num">📁 第2の書</div>
+      <div class="slot-empty-text">── 空のデータ ──</div>
+    </div>
+    <!-- Slot 3 -->
+    <div class="save-slot" id="save-slot-3">
+      <div class="slot-num">📁 第3の書</div>
+      <div class="slot-empty-text">── 空のデータ ──</div>
+    </div>
+    <div class="save-info-box">
+      💡 オートセーブ機能あり（最後に正解した問題の後に自動保存されます）<br>
+      データはこのブラウザに保存されます。
+    </div>
+    <!-- Export / Import -->
+    <div class="transfer-box">
+      <div class="transfer-box-title">🌐 データ移行（別のPC・ブラウザへ）</div>
+      他のパソコンやブラウザでも冒険データを引き継げます。<br>
+      エクスポート→ファイルを保存→別PCでインポート
+      <div class="transfer-btns">
+        <button class="transfer-btn" onclick="exportSaveData()">📤 エクスポート（保存）</button>
+        <label class="transfer-btn" style="cursor:pointer;">
+          📥 インポート（読込）
+          <input type="file" id="import-file-input" accept=".json" style="display:none;" onchange="importSaveData(event)">
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class="save-footer">
+    <button class="act-btn" id="save-back-btn" onclick="closeSaveScreen()" style="width:100%;">◀ もどる</button>
+  </div>
+</div>
+
+<!-- Auto-save toast -->
+<div class="autosave-toast" id="autosave-toast">💾 オートセーブしました</div>
+
+<!-- ═══════════════════════════════════════
+     BATTLE SCREEN
+═══════════════════════════════════════ -->
+<div id="screen-battle">
+
+  <!-- Battle field -->
+  <div class="battle-field" id="battle-field">
+    <div class="bf-sky"></div>
+    <div class="bf-ground"></div>
+    <div class="bf-stars"></div>
+    <div class="bf-moon" id="bf-moon">🌙</div>
+    <div class="bf-field-label" id="bf-field-label">法令の森</div>
+
+    <!-- Monster -->
+    <div class="monster-area" id="monster-area">
+      <span class="monster-sprite" id="monster-sprite">📜</span>
+      <div class="monster-name-tag" id="monster-name">ろうきほうのまじん</div>
+      <div class="m-hp-bar"><div class="m-hp-fill" id="m-hp-fill" style="width:100%"></div></div>
+    </div>
+
+    <!-- Player -->
+    <div class="player-area">
+      <span class="player-sprite" id="player-sprite">🧙‍♂️</span>
+      <div class="player-label" id="player-label">見習い社労士</div>
+    </div>
+
+    <!-- Combo badge -->
+    <div class="combo-badge" id="combo-badge">🔥 コンボ ×3!</div>
+  </div>
+
+  <!-- Status bar -->
+  <div class="status-bar">
+    <div class="sb-left">
+      <div class="sb-job" id="sb-job">見習い社労士</div>
+      <div class="sb-level">Lv.<span id="sb-lv">1</span></div>
+    </div>
+    <div class="sb-mid">
+      <div class="bar-row">
+        <span class="bar-lbl hp-lbl">HP</span>
+        <div class="bar-outer"><div class="hp-fill" id="hp-fill" style="width:100%"></div></div>
+        <span class="bar-val" id="hp-val">30/30</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-lbl ex-lbl">EX</span>
+        <div class="bar-outer"><div class="ex-fill" id="ex-fill" style="width:0%"></div></div>
+        <span class="bar-val" id="ex-val">0/100</span>
+      </div>
+    </div>
+    <div class="sb-right">
+      正解 <span id="sb-correct">0</span>問<br>
+      連続 <span id="sb-streak">0</span>問
+    </div>
+  </div>
+
+  <!-- Message box -->
+  <div class="msg-box" id="msg-box">冒険を始めよう！<span class="msg-cursor"></span></div>
+
+  <!-- Question area -->
+  <div id="q-area" style="display:none;">
+    <div class="q-box">
+      <span class="q-field-badge" id="q-field">労基</span>
+      <span class="q-type-badge qt-battle" id="q-type">通常バトルクエスト</span>
+      <div class="q-text" id="q-text"></div>
+    </div>
+    <div class="choices" id="choices"></div>
+  </div>
+
+  <!-- Action row -->
+  <div class="action-row" id="action-row" style="display:none;">
+    <button class="act-btn primary" id="btn-next" onclick="nextQuestion()">つぎの問題へ ▶</button>
+    <button class="act-btn" onclick="showStatus()">📊 ステータス</button>
+  </div>
+
+  <!-- Result badge -->
+  <div id="result-badge" style="display:none;"></div>
+
+  <!-- Explanation -->
+  <div id="expl-area" style="display:none;"></div>
+
+  <!-- Nav bar -->
+  <div class="nav-bar">
+    <button class="nav-btn" onclick="showBattle()">⚔ バトル</button>
+    <button class="nav-btn" onclick="showStatus()">📊 ステータス</button>
+    <button class="nav-btn" onclick="startReview()">🔄 復習</button>
+    <button class="nav-btn" onclick="showSaveScreen('save')">💾 セーブ</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     STATUS SCREEN
+═══════════════════════════════════════ -->
+<div id="screen-status">
+  <div class="st-title">📊 ステータス</div>
+
+  <div class="st-job-box">
+    <div class="st-job-name" id="st-job">🧙‍♂️ 見習い社労士</div>
+    <div class="st-char" id="st-char">🧙‍♂️</div>
+  </div>
+
+  <div class="st-section">
+    <div class="st-sec-title">⚡ 冒険者データ</div>
+    <div class="st-row"><span class="st-key">レベル</span><span class="st-val" id="st-lv">1</span></div>
+    <div class="st-row"><span class="st-key">経験値</span><span class="st-val" id="st-exp">0/100</span></div>
+    <div class="st-row"><span class="st-key">HP</span><span class="st-val" id="st-hp">30/30</span></div>
+    <div class="st-row"><span class="st-key">総正解数</span><span class="st-val" id="st-ok">0問</span></div>
+    <div class="st-row"><span class="st-key">総正答率</span><span class="st-val" id="st-rate">—</span></div>
+    <div class="st-row"><span class="st-key">最高連続正解</span><span class="st-val" id="st-best">0問</span></div>
+  </div>
+
+  <div class="st-section">
+    <div class="st-sec-title">🗺 分野別正答率</div>
+    <div id="st-fields"></div>
+  </div>
+
+  <div class="st-section">
+    <div class="st-sec-title">🎒 所持アイテム</div>
+    <div style="font-size:11px;color:#8899bb;line-height:1.9;">📚 知識の書　📜 条文の巻物　📖 魔法辞典（語呂）</div>
+  </div>
+
+  <div class="st-section">
+    <div class="st-sec-title">⬆ 次の職業進化条件</div>
+    <div class="next-job-box" id="st-nextjob">—</div>
+  </div>
+
+  <button class="act-btn" onclick="showBattle()">⚔ バトルに戻る</button>
+</div>
+
+</div><!-- #game -->
+
+<!-- Level-up overlay -->
+<div id="overlay-levelup">
+  <div class="lu-icon">⭐</div>
+  <div class="lu-text" id="lu-text">レベルアップ！！</div>
+  <div class="lu-detail" id="lu-detail"></div>
+  <button class="act-btn primary" onclick="closeLU()" style="margin-top:8px;">つぎへ ▶</button>
+</div>
+
+<script>
+/* ================================================
+   GAME STATE
+   ================================================ */
+const G = {
+  level: 1, exp: 0, hp: 30, maxHp: 30,
+  correct: 0, total: 0, streak: 0, bestStreak: 0,
+  job: '見習い社労士', jobEmoji: '🧙‍♂️',
+  wrongIds: [],
+  seenIds: new Set(),
+  consecutiveWrong: 0,
+  reviewMode: false,
+  currentQ: null,
+  answered: false,
+  fields: {
+    '労基':{ c:0,t:0 }, '安衛':{ c:0,t:0 }, '労災':{ c:0,t:0 },
+    '雇保':{ c:0,t:0 }, '健保':{ c:0,t:0 }, '厚年':{ c:0,t:0 },
+    '国年':{ c:0,t:0 }, '社一':{ c:0,t:0 }
+  },
+  cond: {
+    scrollRead: 0, reformQ: 0, reformOK: 0,
+    socialQ: 0, socialOK: 0, mockPassed: false
+  }
+};
+
+/* ================================================
+   QUESTION BANK
+   ================================================ */
+const QS = [
+/* ── 労働基準法 ── */
+{ id:1,  f:'労基', lv:1,  tp:'battle', mon:'📜', mn:'法令書のまじん',
+  q:'労働基準法の労働時間の原則として正しいものはどれか？',
+  ch:['A．1日8時間、1週40時間','B．1日9時間、1週45時間','C．1日8時間、1週48時間','D．1日10時間、1週50時間','E．1日7時間、1週35時間'],
+  ans:0, pt:10,
+  ex:'【正解】A. 1日8時間・1週40時間（労基法32条）\n\n法定労働時間は「ハッパ（8・40）で働く！」と覚えよう。\nこれを超えて労働させるには三六協定（36協定）が必要です。' },
+
+{ id:2,  f:'労基', lv:2,  tp:'battle', mon:'⚡', mn:'残業の亡霊',
+  q:'三六協定（時間外・休日労働に関する協定）について、2019年改正後の原則的な時間外労働の上限として正しいものはどれか？',
+  ch:['A．月60時間・年720時間','B．月45時間・年360時間','C．月100時間・年960時間','D．制限なし（三六協定で自由に設定可）','E．月30時間・年180時間'],
+  ans:1, pt:15,
+  ex:'【正解】B. 月45時間・年360時間（労基法36条）\n\n2019年4月から時間外労働の上限が法律で規制されました。\n・原則：月45時間・年360時間\n・特別条項あり時：年720時間・月100時間未満（複数月平均80時間以内）\n\n違反した場合は6ヶ月以下の懲役または30万円以下の罰金！' },
+
+{ id:3,  f:'労基', lv:3,  tp:'seal',   mon:'💰', mn:'賃金の魔物',
+  q:'次の（　）に当てはまる語句はどれか？\n「使用者は、労働者が（　）を請求した場合は、支払期日前であっても既往の労働に対する賃金を支払わなければならない。」',
+  ch:['A．退職','B．非常の場合の費用','C．育児休業','D．転居','E．昇給'],
+  ans:1, pt:15,
+  ex:'【正解】B. 非常の場合の費用（労基法25条：非常時払い）\n\n「非常の場合」＝出産・疾病・災害・婚姻・死亡など。\n支払期日前でも既往の労働分の賃金を請求できます。\n\n💡 「ひじょうに急ぐ時は、先払いを！」' },
+
+{ id:4,  f:'労基', lv:4,  tp:'battle', mon:'🌿', mn:'有休の精霊',
+  q:'年次有給休暇について正しいものはどれか？',
+  ch:['A．入社後6ヶ月継続勤務し、全労働日の8割以上出勤した場合に10日付与される','B．入社後3ヶ月で10日付与される','C．付与日数の上限は15日である','D．パートタイム労働者には付与されない','E．有給休暇取得を理由にした降格は認められている'],
+  ans:0, pt:15,
+  ex:'【正解】A. 6ヶ月継続勤務＋8割以上出勤→10日（労基法39条）\n\n付与日数は10日〜最大20日（勤続年数で増加）。\nパートタイム労働者にも比例付与あり。\n有給取得を理由にした不利益取扱いは禁止！\n\n💡 語呂：「ろく（6）ヶ月でようやく10日の休み！」' },
+
+{ id:5,  f:'労基', lv:5,  tp:'battle', mon:'👶', mn:'年少者の守り人',
+  q:'年少者（満18歳未満）の深夜業について正しいものはどれか？',
+  ch:['A．18歳未満は午後11時から午前6時まで禁止','B．18歳未満は午後10時から午前5時まで原則禁止','C．18歳未満でも使用者の同意があれば深夜業可能','D．16歳以上であれば深夜業は自由にできる','E．15歳未満のみ深夜業が禁止される'],
+  ans:1, pt:15,
+  ex:'【正解】B. 満18歳未満は午後10時〜午前5時の就業禁止（労基法61条）\n\n年少者保護の重要ポイント：\n・深夜業禁止（例外あり：交替制・農林水産等）\n・危険有害業務禁止\n・親権者は本人に代わって労働契約を締結できない！\n\n💡 「じゅうはちさい（18歳）まで夜10時帰宅！」' },
+
+{ id:6,  f:'労基', lv:6,  tp:'magic',  mon:'💸', mn:'割増賃金の番人',
+  q:'法定時間外労働（月60時間以下）に対する割増賃金率として正しいものはどれか？',
+  ch:['A．10%以上','B．15%以上','C．25%以上','D．30%以上','E．50%以上'],
+  ans:2, pt:15,
+  ex:'【正解】C. 25%以上（労基法37条）\n\n割増賃金率まとめ：\n・法定時間外（月60時間以下）：25%以上\n・法定時間外（月60時間超）：50%以上（中小企業は2023年4月から適用）\n・法定休日労働：35%以上\n・深夜業：25%以上\n・深夜＋時間外：50%以上（25+25）\n\n💡 「にじゅうご（25）%が基本！」' },
+
+{ id:7,  f:'労基', lv:8,  tp:'ritual', mon:'📋', mn:'解雇予告の使者',
+  q:'解雇予告について正しいものはどれか？',
+  ch:['A．少なくとも30日前に予告するか、30日分以上の平均賃金を支払う','B．少なくとも14日前に予告すれば足りる','C．試用期間中は解雇予告不要（期間は問わない）','D．解雇予告手当は月給の1ヶ月分','E．正当な理由がない解雇でも30日前予告で有効'],
+  ans:0, pt:15,
+  ex:'【正解】A. 30日前予告または30日分以上の平均賃金（解雇予告手当）\n\n解雇予告の例外（予告不要）：\n①天災事変など不可抗力による事業廃止\n②労働者側の責めに帰すべき事由（労基署長の認定要）\n③試用期間14日以内\n\n💡 「さんじゅう（30）日前に通知か手当を！」' },
+
+/* ── 雇用保険法 ── */
+{ id:8,  f:'雇保', lv:7,  tp:'battle', mon:'🏠', mn:'失業の亡者',
+  q:'雇用保険の基本手当の受給資格要件として正しいものはどれか？',
+  ch:['A．離職前2年間に被保険者期間が通算6ヶ月以上','B．離職前2年間に被保険者期間が通算12ヶ月以上（特定受給資格者等は6ヶ月）','C．離職前1年間に被保険者期間が通算6ヶ月以上','D．在職期間は問わず、離職すれば受給できる','E．離職前3年間に被保険者期間が通算24ヶ月以上'],
+  ans:1, pt:20,
+  ex:'【正解】B. 離職前2年間に通算12ヶ月以上（特定受給資格者等は6ヶ月）\n\n特定受給資格者（倒産・解雇等）は、離職前1年間に通算6ヶ月以上でOK。\nまず「7日間の待期期間」があり、その後給付開始。\n\n💡 「ふつうは12ヶ月、くびなら6ヶ月！」' },
+
+{ id:9,  f:'雇保', lv:8,  tp:'battle', mon:'🎭', mn:'給付制限の呪い師',
+  q:'自己都合退職による基本手当の給付制限期間（2020年10月改正後）として正しいものはどれか？',
+  ch:['A．常に1ヶ月','B．常に3ヶ月','C．原則2ヶ月（5年間で2回以上の自己都合退職は3ヶ月）','D．給付制限なし','E．原則3ヶ月（初回のみ1ヶ月）'],
+  ans:2, pt:20,
+  ex:'【正解】C. 原則2ヶ月、5年間で2回以上は3ヶ月（2020年10月改正）\n\n2020年10月の改正で3ヶ月→2ヶ月に短縮されました。\n・待期7日間＋給付制限2ヶ月（原則）\n・特定受給資格者・特定理由離職者は給付制限なし\n\n⚠️ 2026年現在の最新情報に基づく' },
+
+{ id:10, f:'雇保', lv:10, tp:'magic',  mon:'👩‍🍼', mn:'育児給付の天使',
+  q:'育児休業給付金の支給率について正しいものはどれか？（2025年改正後）',
+  ch:['A．育休開始から終了まで一律50%','B．育休開始から180日まで67%、181日以降50%','C．育休開始から90日まで80%、91日以降50%','D．育休開始から6ヶ月まで100%（給与相当額）','E．育休開始から終了まで一律67%'],
+  ans:1, pt:20,
+  ex:'【正解】B. 180日まで67%、181日以降50%\n\n育児休業給付金（雇保法）：\n・受給資格：離職前2年間に通算12ヶ月以上の被保険者期間\n・支給期間：子が原則1歳（最大2歳まで延長可）\n・社会保険料・所得税は免除・非課税\n\n💡 「いっ(1)ろく(6)十(80日)ごで(67%)切り替わる！」' },
+
+{ id:11, f:'雇保', lv:11, tp:'battle', mon:'👴', mn:'高年齢給付の翁',
+  q:'高年齢雇用継続基本給付金の支給対象者として正しいものはどれか？',
+  ch:['A．55歳以上65歳未満で、60歳到達時の賃金の75%未満に低下した者','B．60歳以上65歳未満で、雇用保険の被保険者期間5年以上の者で、60歳到達時の賃金の75%未満に低下した者','C．65歳以上70歳未満の者','D．60歳未満でも申請できる','E．被保険者期間3年以上であれば受給できる'],
+  ans:1, pt:20,
+  ex:'【正解】B. 60歳以上65歳未満・被保険者期間5年以上・75%未満に低下した者\n\n高年齢雇用継続基本給付金：\n・最大支給率：現在の賃金の15%（→2025年改正で段階的に縮小予定）\n・「高年齢再就職給付金」は一定の基本手当残日数がある場合に適用\n\n⚠️ 2026年の最新支給率を確認すること！' },
+
+/* ── 労働安全衛生法 ── */
+{ id:12, f:'安衛', lv:6,  tp:'battle', mon:'⚙️', mn:'安全衛生の番人',
+  q:'産業医の選任義務が生じる事業場の規模として正しいものはどれか？',
+  ch:['A．10人以上','B．30人以上','C．50人以上（常時）','D．100人以上','E．500人以上'],
+  ans:2, pt:15,
+  ex:'【正解】C. 常時50人以上（安衛法13条）\n\n安全衛生管理体制（50人以上で必要なもの）：\n・衛生管理者（全業種）\n・産業医\n・衛生委員会（または安全衛生委員会）\n\n💡 語呂：「ゴ（5）十人で産業医が必要！」\n・専属産業医が必要：1,000人以上（特定有害業務は500人以上）' },
+
+{ id:13, f:'安衛', lv:7,  tp:'seal',   mon:'🏥', mn:'健康診断の守護霊',
+  q:'定期健康診断の実施間隔として（　）に入る数字はどれか？\n「使用者は常時使用する労働者に対して（　）以内ごとに1回、定期的に健康診断を行わなければならない。」',
+  ch:['A．3ヶ月','B．6ヶ月','C．1年','D．2年','E．3年'],
+  ans:2, pt:15,
+  ex:'【正解】C. 1年以内ごとに1回（安衛法66条）\n\n健康診断の種類と頻度：\n・雇入れ時健康診断：入社時1回\n・定期健康診断：年1回（1年以内ごと）\n・特定業務従事者（深夜業等）：6ヶ月ごと\n\n💡 「年1回の健康診断！特別なら6ヶ月！」' },
+
+/* ── 労働者災害補償保険法 ── */
+{ id:14, f:'労災', lv:8,  tp:'magic',  mon:'⚡', mn:'業務災害の番竜',
+  q:'業務災害の認定要件として正しいものはどれか？',
+  ch:['A．業務遂行性のみで足りる','B．業務起因性のみで足りる','C．業務遂行性と業務起因性の両方が必要','D．使用者の故意・過失が必要','E．労働者に過失がないことが必要'],
+  ans:2, pt:20,
+  ex:'【正解】C. 業務遂行性＋業務起因性の両方が必要\n\n①業務遂行性：事業主の支配・管理下にあること\n②業務起因性：業務と傷病との間に相当因果関係があること\n\n💡 語呂：「ロウ（遂行）・キ（起因）の2つで労災認定！」\n・通勤途中の災害は「通勤災害」として別途保護されます' },
+
+{ id:15, f:'労災', lv:9,  tp:'battle', mon:'🏚️', mn:'通勤災害の霧',
+  q:'通勤災害として認定される「通勤」の範囲に含まれないものはどれか？',
+  ch:['A．住居と就業場所との間の往復','B．複数事業場間の移動（就業の場所から他の就業の場所への移動）','C．単身赴任者が帰省先住居と就業場所の間を移動すること','D．通勤途中に友人宅に立ち寄るための逸脱（日常生活上必要な行為ではない）','E．通勤途中に病院で診察を受けるための逸脱（その後合理的経路に戻った場合）'],
+  ans:3, pt:20,
+  ex:'【正解】D. 合理的経路から逸脱（友人宅立ち寄り）は通勤災害に該当しない\n\n通勤の3パターン：①住居↔就業場所、②事業場間移動、③単身赴任者の帰省移動\n\n逸脱・中断後は原則として通勤にならないが、例外として「日常生活上必要な行為」（買い物・通院等）のための逸脱・中断は認められます（その行為が終わった後から再度通勤扱い）。' },
+
+{ id:16, f:'労災', lv:10, tp:'battle', mon:'🔥', mn:'特別加入の炎龍',
+  q:'労働者災害補償保険の特別加入制度について正しいものはどれか？',
+  ch:['A．個人事業主（一人親方）は特別加入できない','B．中小事業主は特別加入できる','C．海外派遣者は特別加入できない','D．特別加入者に対して労災保険法の全規定が適用される','E．特別加入には労働基準監督署長の承認が必要'],
+  ans:1, pt:20,
+  ex:'【正解】B. 中小事業主は特別加入できる（労災法33条〜）\n\n特別加入の対象者：\n①中小事業主等（労働者を使用する中小企業の事業主・役員等）\n②一人親方その他特定作業従事者（個人タクシー・建設業の一人親方等）\n③海外派遣者\n④特定農作業従事者等\n\n特別加入申請は「特別加入団体」を通じて行い、都道府県労働局長が承認。' },
+
+/* ── 健康保険法 ── */
+{ id:17, f:'健保', lv:11, tp:'battle', mon:'💊', mn:'保険料の龍',
+  q:'健康保険の標準報酬月額の等級数として正しいものはどれか？',
+  ch:['A．30等級','B．40等級','C．47等級','D．50等級','E．60等級'],
+  ans:3, pt:20,
+  ex:'【正解】D. 50等級（健保法40条）\n\n標準報酬月額：\n・等級数：50等級\n・下限：5万8千円（第1級）\n・上限：139万円（第50級）\n\n厚生年金の標準報酬月額は32等級！（健保と異なることに注意）\n\n💡 「健保はゴジュウ（50）、厚年はサンジュウニ（32）」' },
+
+{ id:18, f:'健保', lv:12, tp:'magic',  mon:'🌡️', mn:'傷病手当の使い魔',
+  q:'健康保険の傷病手当金について正しいものはどれか？',
+  ch:['A．支給額は標準報酬日額の3分の1','B．待期期間は継続3日間（公休日含む）','C．業務上の疾病にも支給される','D．支給期間は通算して1年6ヶ月（2022年改正後）','E．在職中のみ受給できる'],
+  ans:3, pt:20,
+  ex:'【正解】D. 支給期間は通算して1年6ヶ月（2022年1月改正）\n\n傷病手当金（健保法99条）：\n・支給額：標準報酬日額の2/3（Aは誤り）\n・待期：継続3日間（Bは正しい説明だが「継続」が重要ポイント）\n・業務上傷病は労災保険が適用（Cは誤り）\n・2022年改正：「通算」1年6ヶ月（復職後に再休業しても残日数分受給可能に）\n\n💡 「2/3の傷病手当、3日待ちで通算1年半！」' },
+
+{ id:19, f:'健保', lv:13, tp:'battle', mon:'🏥', mn:'高額療養費の壁',
+  q:'健康保険の高額療養費制度（70歳未満・区分ウ：標準報酬月額28〜50万円）の自己負担限度額の計算式として正しいものはどれか？',
+  ch:['A．252,600円＋（医療費－842,000円）×1%','B．167,400円＋（医療費－558,000円）×1%','C．80,100円＋（医療費－267,000円）×1%','D．57,600円','E．35,400円'],
+  ans:2, pt:25,
+  ex:'【正解】C. 80,100円＋（総医療費－267,000円）×1%（区分ウ：一般所得層）\n\n70歳未満の限度額（5区分）：\n・ア（〜1,160万円）：252,600円＋×1%\n・イ（〜770万円）：167,400円＋×1%\n・ウ（〜370万円）：80,100円＋×1% ←一般\n・エ（住民税非課税以外）：57,600円\n・オ（住民税非課税）：35,400円\n\n多数回該当は限度額が引き下げられます！' },
+
+{ id:20, f:'健保', lv:14, tp:'ritual', mon:'👶', mn:'出産給付の妖精',
+  q:'健康保険の出産手当金について正しいものはどれか？',
+  ch:['A．出産予定日前42日（多胎は98日）から出産後56日間支給される','B．出産予定日の前後56日が対象','C．支給額は標準報酬日額の3分の2','D．AとCの両方が正しい','E．出産手当金は出産育児一時金と同時に受給できない'],
+  ans:3, pt:20,
+  ex:'【正解】D. AとCの両方が正しい\n\n出産手当金（健保法102条）：\n・期間：出産予定日前42日（多胎98日）〜出産後56日\n・支給額：標準報酬日額の2/3\n・出産育児一時金との併用可能！（Eは誤り）\n\n💡 「前42日・後56日・2/3！」\n出産育児一時金：50万円（2023年4月〜）' },
+
+/* ── 厚生年金保険法 ── */
+{ id:21, f:'厚年', lv:13, tp:'scroll', mon:'👴', mn:'老齢の賢者',
+  q:'老齢厚生年金の受給開始年齢（原則）として正しいものはどれか？',
+  ch:['A．60歳','B．62歳','C．63歳','D．65歳','E．70歳'],
+  ans:3, pt:20,
+  ex:'【正解】D. 65歳（厚年法42条）\n\n老齢厚生年金の受給要件：\n①老齢基礎年金の受給権があること\n②厚生年金の被保険者期間が1ヶ月以上\n③受給資格期間（10年）を満たすこと\n\n・繰上げ受給：60歳〜（減額0.4%/月）\n・繰下げ受給：最大75歳まで（増額0.7%/月）\n\n💡 「原則ろくじゅうご（65）歳から！」' },
+
+{ id:22, f:'厚年', lv:14, tp:'battle', mon:'💎', mn:'報酬比例の魔王',
+  q:'老齢厚生年金の報酬比例部分（2003年4月以降の期間）の計算式として正しいものはどれか？',
+  ch:['A．平均標準報酬月額×7.125/1000×被保険者月数','B．平均標準報酬額×5.481/1000×被保険者月数','C．平均標準報酬月額×5.481/1000×被保険者月数','D．平均標準報酬額×7.125/1000×被保険者月数','E．標準報酬月額×0.005481×被保険者月数'],
+  ans:1, pt:25,
+  ex:'【正解】B. 平均標準報酬額×5.481/1000×被保険者月数\n\n2003年4月からは賞与も含む「平均標準報酬額」を使用！\n・2003年4月以降：平均標準報酬額×5.481/1000\n・2003年3月以前：平均標準報酬月額×7.125/1000\n\n⚠️「報酬額」vs「報酬月額」の区別が最重要ポイント！\n試験では必ずここが問われます。' },
+
+{ id:23, f:'厚年', lv:15, tp:'magic',  mon:'🏛️', mn:'在職老齢年金の壁',
+  q:'在職老齢年金制度（令和4年改正後）について正しいものはどれか？',
+  ch:['A．65歳未満と65歳以上で基準額が異なる','B．65歳以上の場合、総報酬月額相当額と老齢厚生年金の1/2の合計が48万円超で支給停止','C．70歳以降は在職老齢年金の規定が適用されない','D．一律に50万円の基準が適用される（令和4年4月〜）','E．在職老齢年金制度は2024年に廃止された'],
+  ans:3, pt:25,
+  ex:'【正解】D. 令和4年4月〜65歳未満・以上ともに「50万円」（現在は改定された基準額）\n\n令和4年4月改正：\n・改正前：65歳未満は28万円、65歳以上は47万円\n・改正後：65歳未満・以上ともに一本化（当初50万円）\n\n⚠️ 基準額は毎年改定されます！\n総報酬月額相当額＋年金月額÷2が基準額超で年金停止。\n令和6年改正で廃止が検討されています。' },
+
+{ id:24, f:'厚年', lv:16, tp:'battle', mon:'♿', mn:'障害認定の鬼',
+  q:'障害厚生年金の支給要件として正しいものはどれか？',
+  ch:['A．初診日に厚生年金被保険者で、初診日前に保険料納付要件を満たすこと','B．65歳以上にならないと受給できない','C．障害等級は1級・2級・3級・4級の4区分','D．障害厚生年金は業務外の障害のみ対象','E．事後重症請求はできない'],
+  ans:0, pt:20,
+  ex:'【正解】A. 初診日に厚生年金被保険者であること（厚年法47条）\n\n障害厚生年金の受給要件：\n①初診日に被保険者であること\n②保険料納付要件を満たすこと\n③障害認定日に障害等級1〜3級に該当すること\n\n等級は1〜3級（国民年金は1〜2級）（Cは誤り）\n3級は厚生年金独自！最低保障額あり。' },
+
+/* ── 国民年金法 ── */
+{ id:25, f:'国年', lv:14, tp:'battle', mon:'🌍', mn:'国民皆年金の守護者',
+  q:'国民年金の第1号被保険者として正しいものはどれか？',
+  ch:['A．日本国内に住所を有する20歳以上60歳未満の者で、第2号・第3号被保険者でない者（外国人も含む）','B．日本国籍を有する20歳以上60歳未満の者のみ','C．20歳以上の学生は任意加入','D．自営業者は任意加入','E．60歳以上は強制加入'],
+  ans:0, pt:20,
+  ex:'【正解】A. 日本国内居住の20歳以上60歳未満・第2号・第3号以外の者（外国人含む）\n\n3種類の被保険者：\n・第1号：自営業者・学生・無職等（20〜60歳未満）\n・第2号：厚生年金保険の被保険者（会社員・公務員）\n・第3号：第2号に扶養される配偶者（20〜60歳未満）\n\n💡 外国人も日本国内居住なら強制加入！' },
+
+{ id:26, f:'国年', lv:15, tp:'seal',   mon:'📅', mn:'保険料の精',
+  q:'老齢基礎年金の満額支給に必要な期間として（　）に入る数字はどれか？\n「保険料納付済期間等が（　）年（480ヶ月）ある場合に満額が支給される。」',
+  ch:['A．25','B．30','C．35','D．40','E．45'],
+  ans:3, pt:20,
+  ex:'【正解】D. 40年（480ヶ月）\n\n老齢基礎年金（国年法27条）：\n・満額受給：40年（480ヶ月）の保険料納付済期間等が必要\n・受給資格期間：10年（120ヶ月）\n・2026年（令和8年）の年額：816,000円（予定）\n\n💡 「よんじゅう（40）年でフルペンション！」\n納付できなかった期間は追納制度を活用しよう！' },
+
+{ id:27, f:'国年', lv:16, tp:'magic',  mon:'🔮', mn:'保険料免除の魔法使い',
+  q:'国民年金の保険料免除制度について正しいものはどれか？',
+  ch:['A．全額免除期間は老齢基礎年金の計算上、納付済期間と同じ扱い','B．全額免除期間の年金額への反映は、納付済期間の1/2（2009年4月以降は1/2）','C．一部納付（一部免除）には3種類ある（半額・4分の3・4分の1免除）','D．保険料免除を受けると受給資格期間に算入されない','E．学生納付特例期間は老齢基礎年金の額に反映される'],
+  ans:1, pt:20,
+  ex:'【正解】B. 全額免除期間は、2009年4月以降の期間は納付済期間の1/2として年金額に反映\n\n免除の年金額への反映（2009年4月以降）：\n・全額免除：1/2\n・3/4免除：5/8\n・半額免除：3/4\n・1/4免除：7/8\n\n全額免除でも受給資格期間には算入！（Dは誤り）\n学生納付特例・猶予期間は受給資格期間に算入されるが年金額には反映されない（Eは誤り）' },
+
+/* ── 社会保険一般・横断整理 ── */
+{ id:28, f:'社一', lv:16, tp:'battle', mon:'🏛️', mn:'社会保障の番人',
+  q:'社会保険の種類と根拠法の組み合わせとして誤っているものはどれか？',
+  ch:['A．老齢給付 ― 国民年金法・厚生年金保険法','B．業務上災害補償 ― 労働者災害補償保険法','C．失業等給付 ― 雇用保険法','D．疾病給付 ― 労働安全衛生法','E．介護給付 ― 介護保険法'],
+  ans:3, pt:20,
+  ex:'【正解（誤り）】D. 疾病給付の根拠法は「健康保険法・国民健康保険法」等であり、労働安全衛生法は疾病給付の根拠法ではない\n\n5大社会保険の根拠法：\n・医療（疾病）：健康保険法・国健保法\n・年金（老齢等）：国民年金法・厚生年金保険法\n・介護：介護保険法\n・雇用：雇用保険法\n・労災：労働者災害補償保険法\n\n💡 「医年介雇労の5つ！」' },
+
+{ id:29, f:'社一', lv:17, tp:'ritual', mon:'📊', mn:'白書の魔神',
+  q:'社会保障に関する記述として、最新の動向（2026年現在）に最も適合するものはどれか？',
+  ch:['A．日本の合計特殊出生率は2.0以上を回復した','B．65歳以上人口が総人口に占める割合（高齢化率）は30%を超えている','C．介護保険の被保険者は60歳以上','D．日本の国民医療費は年々減少傾向にある','E．生産年齢人口（15〜64歳）の割合は70%を超えている'],
+  ans:1, pt:25,
+  ex:'【正解】B. 高齢化率は30%超（2025年時点で約29〜30%台）\n\n⚠️ 2026年現在の最新情報：\n・高齢化率：約30%超（2025年推計値）\n・合計特殊出生率：1.2前後で低水準が続く（Aは誤り）\n・介護保険被保険者：40歳以上（Cは誤り）\n・国民医療費：増加傾向（Dは誤り）\n\n白書問題は出題年度の最新版で確認を！' },
+
+{ id:30, f:'労基', lv:18, tp:'battle', mon:'🏰', mn:'改正の城の番人',
+  q:'2024年4月施行の労働基準法改正について、建設業の時間外労働の上限規制に関して正しいものはどれか？',
+  ch:['A．建設業は引き続き上限規制の適用が猶予されている','B．建設業にも原則として月45時間・年360時間の上限規制が適用された','C．建設業は上限規制が永続的に免除されている','D．特別条項があれば月200時間まで認められた','E．2024年4月から建設業の残業は全面禁止された'],
+  ans:1, pt:30,
+  ex:'【正解】B. 2024年4月から建設業にも時間外労働の上限規制が適用！\n\n2024年問題（上限規制適用猶予が終了した業種）：\n・建設業\n・自動車運転の業務\n・医師\n・鹿児島県・沖縄県の砂糖製造業\n\n⚠️ ただし建設業では災害復旧・復興事業に一部例外あり。\n\n「2024年問題」は社労士試験の頻出テーマです！' },
+
+{ id:31, f:'厚年', lv:19, tp:'magic',  mon:'⚔️', mn:'適用拡大の剣士',
+  q:'2022年10月施行の社会保険適用拡大（短時間労働者への適用）について正しいものはどれか？',
+  ch:['A．従業員数50人超の企業が対象になった（2022年10月）','B．月額賃金が8万8千円以上であることが要件の一つ','C．学生も適用対象に含まれる','D．週所定労働時間10時間以上が要件','E．2022年10月から全事業所に適用拡大した'],
+  ans:1, pt:25,
+  ex:'【正解】B. 月額賃金8万8千円以上（健保法附則等）\n\n短時間労働者への社会保険適用要件（4要件）：\n①週の所定労働時間20時間以上\n②月額賃金8万8千円以上\n③2ヶ月を超えて使用される見込み\n④学生でないこと\n\n適用事業所の規模：\n・2022年10月〜：101人以上（常時）\n・2024年10月〜：51人以上（常時）\n\n段階的拡大が試験頻出！' },
+
+{ id:32, f:'雇保', lv:12, tp:'battle', mon:'✈️', mn:'移住給付の旅人',
+  q:'就職促進給付のうち、「就業促進定着手当」について正しいものはどれか？',
+  ch:['A．基本手当の所定給付日数の残日数が3分の1以上残っている場合に支給される','B．再就職先での6ヶ月間の賃金が基本手当の基準賃金よりも低い場合に支給される','C．上限は基本手当日額の40日分','D．AとBの両方が正しい','E．受給には追加で7日間の待期が必要'],
+  ans:3, pt:20,
+  ex:'【正解】D. AとBの両方が正しい\n\n就業促進定着手当：\n・再就職先で6ヶ月以上雇用継続\n・再就職後6ヶ月間の賃金が離職前賃金を下回る場合\n・所定給付日数の残日数が1/3以上\n・上限：基本手当日額×再就職後の被保険者月数×40%\n\n就職促進給付は「再就職手当」との違いも整理しておこう！' },
+];
+
+/* ================================================
+   FIELD & MONSTER DATA
+   ================================================ */
+const FIELD_DATA = {
+  '労基': { bg:'linear-gradient(180deg,#000820 0%,#001840 55%,#002a10 100%)', ground:'#005020' },
+  '安衛': { bg:'linear-gradient(180deg,#101020 0%,#202040 55%,#101530 100%)', ground:'#004055' },
+  '労災': { bg:'linear-gradient(180deg,#200000 0%,#380010 55%,#200000 100%)', ground:'#400000' },
+  '雇保': { bg:'linear-gradient(180deg,#001020 0%,#002040 55%,#001530 100%)', ground:'#004050' },
+  '健保': { bg:'linear-gradient(180deg,#002020 0%,#003535 55%,#001a20 100%)', ground:'#005040' },
+  '厚年': { bg:'linear-gradient(180deg,#100020 0%,#200040 55%,#100030 100%)', ground:'#300050' },
+  '国年': { bg:'linear-gradient(180deg,#001010 0%,#002030 55%,#001020 100%)', ground:'#003040' },
+  '社一': { bg:'linear-gradient(180deg,#0a0a00 0%,#1a1a00 55%,#0a0a00 100%)', ground:'#303000' },
+};
+
+/* ================================================
+   JOB DEFINITIONS
+   ================================================ */
+const JOBS = [
+  { name:'見習い社労士',    emoji:'🧙‍♂️', check:() => true },
+  { name:'条文の探求者',    emoji:'📖',   check:() => G.cond.scrollRead >= 10 },
+  { name:'改正の先駆者',    emoji:'⚔️',   check:() => G.cond.reformQ >= 5 && G.cond.reformOK/G.cond.reformQ >= 0.8 },
+  { name:'判例の賢者',      emoji:'⚖️',   check:() => G.bestStreak >= 5 },
+  { name:'常識の守護者',    emoji:'🛡️',   check:() => G.cond.socialQ >= 5 && G.cond.socialOK/G.cond.socialQ >= 0.9 },
+  { name:'試験の勇者',      emoji:'🗡️',   check:() => G.cond.mockPassed },
+  { name:'総合の王者',      emoji:'👑',   check:() => Object.values(G.fields).every(f => f.t >= 3 && f.c/f.t >= 0.85) },
+];
+
+/* ================================================
+   INTRO SCENES
+   ================================================ */
+const INTRO = [
+  { npc:'🧓', name:'長老',
+    text:'「おお、若者よ… よくぞこの地にたどり着いた。\n\nここは "法令の大地"。この世界では、\n知識のある者だけが\n"社会保険労務士"の称号を\n手にすることができる。」' },
+  { npc:'📜', name:'賢者GPT',
+    text:'「我は"知識の賢者GPT"。あなたの学習の旅を\nサポートする者じゃ。\n\n「法令の森」「年金の山」「労災の谷」「改正の城」\nを踏破し、最終ボスたる "本試験" を倒す冒険\nに出るがよい！」' },
+  { npc:'🧙‍♂️', name:'あなた（見習い社労士）',
+    text:'「よし、わかった！\n\n「知識の剣（条文）」と\n「理解の盾（具体例）」と\n「復習の魔法（再出題）」を使い、\n必ず合格を掴み取る！\n\nその一問が、未来を変える――」' },
+];
+
+/* ================================================
+   QUEUE & REVIEW
+   ================================================ */
+let queue = [];
+let qIdx  = 0;
+
+function buildQueue() {
+  const pool = QS.filter(q => !G.seenIds.has(q.id));
+  return pool.length ? shuffle(pool) : shuffle([...QS]);
+}
+function shuffle(a) {
+  const b = [...a];
+  for (let i = b.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [b[i],b[j]] = [b[j],b[i]];
+  }
+  return b;
+}
+
+/* ================================================
+   SCREEN MANAGEMENT
+   ================================================ */
+const SCREENS = ['screen-title','screen-intro','screen-battle','screen-status','screen-save'];
+function show(id) {
+  SCREENS.forEach(s => document.getElementById(s).style.display = 'none');
+  const el = document.getElementById(id);
+  el.style.display = 'flex';
+  el.style.flexDirection = 'column';
+}
+
+/* ================================================
+   INTRO LOGIC
+   ================================================ */
+let introIdx = 0;
+function startIntro() {
+  introIdx = 0;
+  show('screen-intro');
+  renderIntroScene();
+}
+function renderIntroScene() {
+  const sc = INTRO[introIdx];
+  document.getElementById('intro-npc').textContent     = sc.npc;
+  document.getElementById('intro-npc-name').textContent = sc.name;
+  document.getElementById('intro-content').textContent  = sc.text;
+  document.getElementById('intro-page').textContent     = `${introIdx+1} / ${INTRO.length}`;
+  // Re-trigger animation
+  const box = document.getElementById('intro-text');
+  box.style.animation = 'none';
+  void box.offsetWidth;
+  box.style.animation = '';
+}
+function nextIntro() {
+  introIdx++;
+  if (introIdx < INTRO.length) { renderIntroScene(); return; }
+  startBattle();
+}
+
+/* ================================================
+   BATTLE / GAME LOGIC
+   ================================================ */
+function startBattle() {
+  show('screen-battle');
+  queue = buildQueue();
+  qIdx  = 0;
+  G.reviewMode = false;
+  loadQuestion();
+}
+
+function loadQuestion() {
+  if (qIdx >= queue.length) { queue = buildQueue(); qIdx = 0; }
+  const q = queue[qIdx++];
+  G.currentQ  = q;
+  G.answered  = false;
+  G.seenIds.add(q.id);
+
+  // Field/monster visuals
+  const fd = FIELD_DATA[q.f] || FIELD_DATA['労基'];
+  document.getElementById('battle-field').style.background = fd.bg;
+  document.querySelector('.bf-ground').style.borderTopColor = fd.ground;
+
+  // World name & moon
+  const WORLD_NAMES = {
+    '労基':'🌲 法令の森', '安衛':'⚙️ 安全の砦', '労災':'🔥 労災の谷',
+    '雇保':'🏠 雇用の街', '健保':'💊 健保の泉', '厚年':'⛰️ 年金の山',
+    '国年':'🌍 国年の大地', '社一':'🏰 改正の城'
+  };
+  const MOON_MAP = {
+    '労基':'🌙', '安衛':'🌕', '労災':'🔴', '雇保':'🌛',
+    '健保':'💫', '厚年':'⭐', '国年':'🌟', '社一':'✨'
+  };
+  document.getElementById('bf-field-label').textContent = WORLD_NAMES[q.f] || '法令の森';
+  document.getElementById('bf-moon').textContent = MOON_MAP[q.f] || '🌙';
+
+  document.getElementById('monster-sprite').textContent = q.mon  || '📜';
+  document.getElementById('monster-name').textContent   = q.mn   || 'まじん';
+  document.getElementById('m-hp-fill').style.width      = '100%';
+
+  // Re-animate monster
+  const ma = document.getElementById('monster-area');
+  ma.style.animation = 'none';
+  void ma.offsetWidth;
+  ma.style.animation = '';
+
+  // Message
+  setMsg(`${q.mn || 'まじん'}が現れた！\n知識の剣で撃退せよ！`);
+
+  // Question type label
+  const typeMap = {
+    battle:{ label:'通常バトルクエスト', cls:'qt-battle' },
+    magic: { label:'モンスター戦',       cls:'qt-magic'  },
+    ritual:{ label:'魔法判断の儀式',     cls:'qt-ritual' },
+    seal:  { label:'封印解除クイズ',     cls:'qt-seal'   },
+    scroll:{ label:'古文書の解読',       cls:'qt-scroll' },
+  };
+  const ti = typeMap[q.tp] || typeMap.battle;
+  const tb = document.getElementById('q-type');
+  tb.textContent = ti.label;
+  tb.className   = `q-type-badge ${ti.cls}`;
+
+  document.getElementById('q-field').textContent = q.f;
+  document.getElementById('q-text').textContent  = q.q;
+
+  // Choices
+  const cc = document.getElementById('choices');
+  cc.innerHTML = '';
+  q.ch.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className   = 'choice-btn';
+    btn.textContent = c;
+    btn.onclick     = () => answer(i);
+    cc.appendChild(btn);
+  });
+
+  document.getElementById('q-area').style.display     = 'block';
+  document.getElementById('action-row').style.display = 'none';
+  document.getElementById('result-badge').style.display = 'none';
+  document.getElementById('expl-area').style.display  = 'none';
+}
+
+function answer(sel) {
+  if (G.answered) return;
+  G.answered = true;
+  const q = G.currentQ;
+  const ok = sel === q.ans;
+
+  // Field tracking
+  if (!G.fields[q.f]) G.fields[q.f] = { c:0,t:0 };
+  G.fields[q.f].t++;
+  G.total++;
+  if (q.f === '社一') G.cond.socialQ++;
+  if (q.tp === 'scroll') G.cond.scrollRead++;
+  if (q.lv >= 18) G.cond.reformQ++;
+
+  // Highlight choices
+  document.querySelectorAll('.choice-btn').forEach((btn, i) => {
+    btn.onclick = null;
+    if (i === q.ans) btn.className = 'choice-btn correct';
+    else if (i === sel && !ok) btn.className = 'choice-btn wrong';
+  });
+
+  if (ok) {
+    G.correct++;
+    G.streak++;
+    if (G.streak > G.bestStreak) G.bestStreak = G.streak;
+    G.fields[q.f].c++;
+    G.consecutiveWrong = 0;
+    if (q.f === '社一') G.cond.socialOK++;
+    if (q.lv >= 18) G.cond.reformOK++;
+
+    const pts = q.pt || 10;
+    addExp(pts);
+
+    // Monster defeated
+    document.getElementById('m-hp-fill').style.width = '0%';
+
+    // Flash
+    addFlash();
+
+    const streakNote = G.streak >= 3 ? `\n🔥 ${G.streak}連続正解！すばらしい！` : '';
+    setMsg(`✨ 正解！知識の剣が光った！\n＋${pts} EXP 獲得！${streakNote}`);
+
+    // Combo badge
+    if (G.streak >= 3) {
+      const cb = document.getElementById('combo-badge');
+      cb.textContent = `🔥 コンボ ×${G.streak}!`;
+      cb.style.display = 'block';
+      setTimeout(() => cb.style.display='none', 2500);
+    }
+
+    showResult(true, '⭐ せいかい！');
+    // Auto-save on correct answer
+    setTimeout(() => autoSave(), 600);
+  } else {
+    G.streak = 0;
+    G.consecutiveWrong++;
+    if (!G.wrongIds.includes(q.id)) G.wrongIds.push(q.id);
+
+    const dmg = 5;
+    G.hp = Math.max(0, G.hp - dmg);
+    updateUI();
+
+    // Player hurt
+    const pa = document.querySelector('.player-area');
+    pa.classList.add('hurt-shake');
+    setTimeout(() => pa.classList.remove('hurt-shake'), 350);
+
+    let msg = `❌ 不正解… HP -${dmg}\n正しい答えを確認しよう。`;
+    if (G.consecutiveWrong >= 2) {
+      const enc = ['ここでつまずくのは、次に飛躍する証拠だ！','大丈夫！繰り返すことで必ず身につく！','賢者も最初は間違える。諦めずに進もう！'];
+      msg += `\n\n💪 ${enc[Math.floor(Math.random()*enc.length)]}`;
+    }
+    setMsg(msg);
+
+    if (G.hp <= 0) {
+      G.hp = G.maxHp;
+      setTimeout(() => setMsg('🌟 休息して全回復！\n再び冒険へ出発だ！'), 800);
+    }
+
+    showResult(false, '💀 ちがいます…');
+  }
+
+  // Explanation
+  const ea = document.getElementById('expl-area');
+  ea.style.display = 'block';
+  ea.innerHTML = `<div class="expl-box"><div class="expl-title">📖 解説（賢者GPTより）</div>${escHTML(q.ex)}</div>`;
+
+  updateUI();
+  checkJob();
+
+  document.getElementById('action-row').style.display = 'flex';
+}
+
+function showResult(ok, text) {
+  const rb = document.getElementById('result-badge');
+  rb.className   = ok ? 'result-ok' : 'result-ng';
+  rb.textContent = text;
+  rb.style.display = 'block';
+}
+
+function nextQuestion() {
+  loadQuestion();
+}
+
+/* ================================================
+   EXP / LEVEL
+   ================================================ */
+function expNeeded() { return Math.floor(100 * Math.pow(1.18, G.level-1)); }
+
+function addExp(pts) {
+  G.exp += pts;
+  while (G.exp >= expNeeded()) {
+    G.exp -= expNeeded();
+    levelUp();
+  }
+  updateUI();
+}
+
+function levelUp() {
+  G.level++;
+  G.maxHp = 30 + (G.level-1)*3;
+  G.hp    = Math.min(G.hp+8, G.maxHp);
+
+  const ol = document.getElementById('overlay-levelup');
+  document.getElementById('lu-text').textContent   = `Lv.${G.level} レベルアップ！！`;
+  document.getElementById('lu-detail').textContent = `最大HP +3\n新しい問題が解放される！`;
+  ol.style.display = 'flex';
+}
+
+function closeLU() {
+  document.getElementById('overlay-levelup').style.display = 'none';
+  checkJob();
+}
+
+/* ================================================
+   JOB EVOLUTION
+   ================================================ */
+function checkJob() {
+  for (let i = JOBS.length-1; i >= 0; i--) {
+    if (JOBS[i].check()) {
+      if (G.job !== JOBS[i].name) {
+        G.job      = JOBS[i].name;
+        G.jobEmoji = JOBS[i].emoji;
+        const ol   = document.getElementById('overlay-levelup');
+        document.getElementById('lu-text').textContent   = '職業が変わった！';
+        document.getElementById('lu-detail').textContent = `${G.jobEmoji} ${G.job} に進化！`;
+        ol.style.display = 'flex';
+      }
+      break;
+    }
+  }
+  updateJobDisplay();
+}
+
+function updateJobDisplay() {
+  document.getElementById('sb-job').textContent      = G.job;
+  document.getElementById('player-sprite').textContent = G.jobEmoji;
+  document.getElementById('player-label').textContent  = G.job;
+}
+
+/* ================================================
+   UI UPDATE
+   ================================================ */
+function updateUI() {
+  const en = expNeeded();
+  document.getElementById('sb-lv').textContent  = G.level;
+  document.getElementById('hp-fill').style.width = `${G.hp/G.maxHp*100}%`;
+  document.getElementById('hp-val').textContent  = `${G.hp}/${G.maxHp}`;
+  document.getElementById('ex-fill').style.width = `${G.exp/en*100}%`;
+  document.getElementById('ex-val').textContent  = `${G.exp}/${en}`;
+  document.getElementById('sb-correct').textContent = G.correct;
+  document.getElementById('sb-streak').textContent  = G.streak;
+}
+
+/* ================================================
+   STATUS SCREEN
+   ================================================ */
+function showStatus() {
+  show('screen-status');
+  document.getElementById('st-job').textContent  = `${G.jobEmoji} ${G.job}`;
+  document.getElementById('st-char').textContent = G.jobEmoji;
+  document.getElementById('st-lv').textContent   = G.level;
+  document.getElementById('st-exp').textContent  = `${G.exp} / ${expNeeded()}`;
+  document.getElementById('st-hp').textContent   = `${G.hp} / ${G.maxHp}`;
+  document.getElementById('st-ok').textContent   = `${G.correct}問`;
+  document.getElementById('st-rate').textContent = G.total > 0 ? `${Math.round(G.correct/G.total*100)}%` : '—';
+  document.getElementById('st-best').textContent = `${G.bestStreak}問`;
+
+  // Field bars
+  const fc = document.getElementById('st-fields');
+  fc.innerHTML = '';
+  Object.entries(G.fields).forEach(([name, s]) => {
+    if (!s.t) return;
+    const r = Math.round(s.c/s.t*100);
+    fc.innerHTML += `
+      <div class="field-bar">
+        <div class="fb-label"><span>${name}</span><span>${s.c}/${s.t}（${r}%）</span></div>
+        <div class="fb-outer"><div class="fb-fill" style="width:${r}%"></div></div>
+      </div>`;
+  });
+  if (!fc.innerHTML) fc.innerHTML = '<div style="font-size:10px;color:#445566;">まだデータがありません</div>';
+
+  // Next job
+  const nj = document.getElementById('st-nextjob');
+  let txt = '';
+  JOBS.forEach(j => {
+    if (j.check() || j.name === '見習い社労士') return;
+    const hints = {
+      '条文の探求者':`📖 条文問題をあと${Math.max(0,10-G.cond.scrollRead)}問クリア`,
+      '改正の先駆者':`⚔️ 法改正問題で正答率80%以上（現在${G.cond.reformQ>0?Math.round(G.cond.reformOK/G.cond.reformQ*100):0}%）`,
+      '判例の賢者':  `⚖️ 連続正解5問達成（最高${G.bestStreak}問）`,
+      '常識の守護者':`🛡️ 社一分野で正答率90%以上`,
+      '試験の勇者':  `🗡️ 模試形式で合格点クリア`,
+      '総合の王者':  `👑 全分野で正答率85%以上`,
+    };
+    if (hints[j.name]) txt += hints[j.name]+'\n';
+  });
+  nj.textContent       = txt || '現在の職業が最高峰に近い！さらに高みを目指せ！';
+  nj.style.whiteSpace  = 'pre-line';
+}
+
+function showBattle() {
+  show('screen-battle');
+  if (!G.currentQ) loadQuestion();
+}
+
+/* ================================================
+   REVIEW MODE
+   ================================================ */
+function startReview() {
+  if (!G.wrongIds.length) {
+    show('screen-battle');
+    setMsg('📚 復習する問題がまだありません。\nバトルを続けよう！');
+    if (!G.currentQ) loadQuestion();
+    return;
+  }
+  G.reviewMode = true;
+  queue = shuffle(QS.filter(q => G.wrongIds.includes(q.id)));
+  qIdx  = 0;
+  show('screen-battle');
+  setMsg(`🔄 復習モード開始！\n苦手問題 ${queue.length}問に挑戦！`);
+  setTimeout(() => loadQuestion(), 1500);
+}
+
+/* ================================================
+   HELP
+   ================================================ */
+function showHelp() {
+  show('screen-battle');
+  setMsg(
+    '📖 ヘルプ\n\n' +
+    '⚔ バトル：問題に答えてEXPを獲得\n' +
+    '📊 ステータス：成績・分野別正答率を確認\n' +
+    '🔄 復習：間違えた問題を再出題\n\n' +
+    '問題の種類：択一/穴埋め/〇×等\n\n' +
+    '💡 正解→EXP＋レベルアップ\n' +
+    '❌ 不正解→HP減少（0になっても全回復）\n\n' +
+    '正答率で職業が進化するぞ！'
+  );
+}
+
+/* ================================================
+   HELPERS
+   ================================================ */
+function setMsg(t) { document.getElementById('msg-box').firstChild.textContent = t; }
+function escHTML(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>'); }
+
+function addFlash() {
+  const bf = document.getElementById('battle-field');
+  const f  = document.createElement('div');
+  f.className = 'atk-flash';
+  bf.appendChild(f);
+  setTimeout(() => f.remove(), 350);
+}
+
+/* ================================================
+   SAVE / LOAD SYSTEM
+   ================================================ */
+const SAVE_PREFIX  = 'sharoushi_quest_v1_slot_';
+const AUTO_SLOT    = 0; // slot index 0 = auto-save
+let   _saveMode    = 'save'; // 'save' or 'load'
+let   _saveReturnScreen = 'screen-battle';
+
+/* ── Serialize / Deserialize ── */
+function serializeState() {
+  return {
+    version:  1,
+    savedAt:  new Date().toLocaleString('ja-JP', { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' }),
+    level:    G.level,
+    exp:      G.exp,
+    hp:       G.hp,
+    maxHp:    G.maxHp,
+    correct:  G.correct,
+    total:    G.total,
+    streak:   G.streak,
+    bestStreak: G.bestStreak,
+    job:      G.job,
+    jobEmoji: G.jobEmoji,
+    wrongIds: [...G.wrongIds],
+    seenIds:  [...G.seenIds],
+    consecutiveWrong: G.consecutiveWrong,
+    fields:   JSON.parse(JSON.stringify(G.fields)),
+    cond:     JSON.parse(JSON.stringify(G.cond)),
+  };
+}
+
+function applyState(data) {
+  G.level    = data.level    || 1;
+  G.exp      = data.exp      || 0;
+  G.hp       = data.hp       || 30;
+  G.maxHp    = data.maxHp    || 30;
+  G.correct  = data.correct  || 0;
+  G.total    = data.total    || 0;
+  G.streak   = data.streak   || 0;
+  G.bestStreak = data.bestStreak || 0;
+  G.job      = data.job      || '見習い社労士';
+  G.jobEmoji = data.jobEmoji || '🧙‍♂️';
+  G.wrongIds = data.wrongIds || [];
+  G.seenIds  = new Set(data.seenIds || []);
+  G.consecutiveWrong = data.consecutiveWrong || 0;
+  G.fields   = data.fields   || { '労基':{ c:0,t:0 }, '安衛':{ c:0,t:0 }, '労災':{ c:0,t:0 }, '雇保':{ c:0,t:0 }, '健保':{ c:0,t:0 }, '厚年':{ c:0,t:0 }, '国年':{ c:0,t:0 }, '社一':{ c:0,t:0 } };
+  G.cond     = data.cond     || { scrollRead:0, reformQ:0, reformOK:0, socialQ:0, socialOK:0, mockPassed:false };
+}
+
+/* ── localStorage helpers ── */
+function saveToSlot(slotNum) {
+  const key  = SAVE_PREFIX + slotNum;
+  const data = serializeState();
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+    return true;
+  } catch(e) {
+    return false;
+  }
+}
+
+function loadFromSlot(slotNum) {
+  const key = SAVE_PREFIX + slotNum;
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  } catch(e) {
+    return null;
+  }
+}
+
+function deleteSlot(slotNum) {
+  localStorage.removeItem(SAVE_PREFIX + slotNum);
+}
+
+function hasAnySave() {
+  for (let i = 1; i <= 3; i++) {
+    if (localStorage.getItem(SAVE_PREFIX + i)) return true;
+  }
+  if (localStorage.getItem(SAVE_PREFIX + AUTO_SLOT)) return true;
+  return false;
+}
+
+/* ── Auto-save ── */
+function autoSave() {
+  saveToSlot(AUTO_SLOT);
+  showToast('💾 オートセーブしました');
+}
+
+let _toastTimer = null;
+function showToast(msg) {
+  const el = document.getElementById('autosave-toast');
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.animation = 'none';
+  void el.offsetWidth;
+  el.style.animation = 'toast-in 0.3s ease-out';
+  if (_toastTimer) clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => {
+    el.style.animation = 'toast-out 0.4s ease-out forwards';
+    setTimeout(() => { el.style.display = 'none'; }, 400);
+  }, 2000);
+}
+
+/* ── Save Screen ── */
+function showSaveScreen(mode) {
+  _saveMode = mode;
+  _saveReturnScreen = document.getElementById('screen-battle').style.display !== 'none'
+    ? 'screen-battle'
+    : document.getElementById('screen-status').style.display !== 'none'
+      ? 'screen-status'
+      : 'screen-battle';
+
+  const titleEl = document.getElementById('save-screen-title');
+  const labelEl = document.getElementById('save-mode-label');
+  if (mode === 'load') {
+    titleEl.textContent = '📖 ロード';
+    labelEl.textContent = 'データを読み込む';
+    document.getElementById('save-back-btn').textContent = '◀ もどる（キャンセル）';
+  } else {
+    titleEl.textContent = '💾 セーブ';
+    labelEl.textContent = 'データを保存する';
+    document.getElementById('save-back-btn').textContent = '◀ もどる';
+  }
+
+  renderSaveSlots(mode);
+  show('screen-save');
+}
+
+function renderSaveSlots(mode) {
+  // Auto-save slot info (shown as reference)
+  const autoData = loadFromSlot(AUTO_SLOT);
+
+  for (let i = 1; i <= 3; i++) {
+    const slotEl = document.getElementById(`save-slot-${i}`);
+    const data   = loadFromSlot(i);
+
+    slotEl.innerHTML = ''; // Clear
+
+    // Slot header
+    const numDiv = document.createElement('div');
+    numDiv.className = 'slot-num';
+    numDiv.textContent = `📁 第${i}の書`;
+    slotEl.appendChild(numDiv);
+
+    if (data) {
+      slotEl.className = 'save-slot has-data';
+
+      // Char emoji (float right)
+      const charDiv = document.createElement('div');
+      charDiv.className = 'slot-char';
+      charDiv.textContent = data.jobEmoji || '🧙‍♂️';
+      slotEl.appendChild(charDiv);
+
+      // Job name
+      const jobDiv = document.createElement('div');
+      jobDiv.className = 'slot-job';
+      jobDiv.textContent = data.job || '見習い社労士';
+      slotEl.appendChild(jobDiv);
+
+      // Details
+      const acc = data.total > 0 ? Math.round(data.correct / data.total * 100) : 0;
+      const detDiv = document.createElement('div');
+      detDiv.className = 'slot-details';
+      detDiv.textContent = `Lv.${data.level}　HP ${data.hp}/${data.maxHp}　正解 ${data.correct}問　正答率 ${acc}%`;
+      slotEl.appendChild(detDiv);
+
+      // Date
+      const dateDiv = document.createElement('div');
+      dateDiv.className = 'slot-date';
+      dateDiv.textContent = `最終セーブ：${data.savedAt}`;
+      slotEl.appendChild(dateDiv);
+
+      // Buttons
+      const btnsDiv = document.createElement('div');
+      btnsDiv.className = 'slot-btns';
+
+      if (mode === 'save') {
+        const saveBtn = document.createElement('button');
+        saveBtn.className = 'slot-action-btn';
+        saveBtn.textContent = '💾 上書きセーブ';
+        saveBtn.onclick = (e) => { e.stopPropagation(); confirmSave(i); };
+        btnsDiv.appendChild(saveBtn);
+      } else {
+        const loadBtn = document.createElement('button');
+        loadBtn.className = 'slot-action-btn';
+        loadBtn.textContent = '📖 このデータを読む';
+        loadBtn.onclick = (e) => { e.stopPropagation(); doLoadSlot(i); };
+        btnsDiv.appendChild(loadBtn);
+      }
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'slot-action-btn del';
+      delBtn.textContent = '🗑 削除';
+      delBtn.onclick = (e) => { e.stopPropagation(); confirmDelete(i); };
+      btnsDiv.appendChild(delBtn);
+      slotEl.appendChild(btnsDiv);
+
+    } else {
+      slotEl.className = 'save-slot empty';
+
+      const emptyDiv = document.createElement('div');
+      emptyDiv.className = 'slot-empty-text';
+      emptyDiv.textContent = '── 空のデータ ──';
+      slotEl.appendChild(emptyDiv);
+
+      if (mode === 'save') {
+        const btnsDiv = document.createElement('div');
+        btnsDiv.className = 'slot-btns';
+        const saveBtn = document.createElement('button');
+        saveBtn.className = 'slot-action-btn';
+        saveBtn.textContent = '💾 ここにセーブ';
+        saveBtn.onclick = (e) => { e.stopPropagation(); doSaveSlot(i); };
+        btnsDiv.appendChild(saveBtn);
+        slotEl.appendChild(btnsDiv);
+      }
+    }
+  }
+
+  // Show auto-save info if exists
+  const infoBox = document.querySelector('.save-info-box');
+  if (autoData) {
+    const acc = autoData.total > 0 ? Math.round(autoData.correct / autoData.total * 100) : 0;
+    infoBox.innerHTML = `
+      💾 オートセーブあり：${autoData.savedAt}<br>
+      ${autoData.jobEmoji} ${autoData.job}　Lv.${autoData.level}　正解 ${autoData.correct}問（${acc}%）<br>
+      <span style="color:#5588aa;">※ オートセーブからの続きは「ぼうけんをよむ」→スロット「AUTO」から</span>
+    `;
+    // Add auto-save load button if in load mode and coming from title
+    if (mode === 'load') {
+      infoBox.innerHTML += `<br><button class="slot-action-btn" onclick="doLoadSlot(0)" style="margin-top:6px;width:100%;display:block;">📖 オートセーブから続ける</button>`;
+    }
+  } else {
+    infoBox.innerHTML = '💡 オートセーブ：正解後に自動でデータが保存されます<br>データはこのブラウザに保存されます。';
+  }
+}
+
+function confirmSave(slotNum) {
+  const data = loadFromSlot(slotNum);
+  if (data) {
+    if (!confirm(`第${slotNum}の書のデータを上書きしますか？\n（${data.savedAt} のデータ）`)) return;
+  }
+  doSaveSlot(slotNum);
+}
+
+function doSaveSlot(slotNum) {
+  const ok = saveToSlot(slotNum);
+  if (ok) {
+    showToast(`💾 第${slotNum}の書にセーブしました`);
+    renderSaveSlots(_saveMode);
+  } else {
+    alert('セーブに失敗しました。ブラウザの設定を確認してください。');
+  }
+}
+
+function doLoadSlot(slotNum) {
+  const data = loadFromSlot(slotNum);
+  if (!data) { showToast('❌ データが見つかりません'); return; }
+
+  const label = slotNum === 0 ? 'オートセーブ' : `第${slotNum}の書`;
+  if (!confirm(`${label}のデータを読み込みますか？\n現在の進行状況は上書きされます。`)) return;
+
+  applyState(data);
+  updateUI();
+  updateJobDisplay();
+
+  G.currentQ = null;
+  queue = [];
+  qIdx  = 0;
+
+  show('screen-battle');
+  loadQuestion();
+  showToast(`📖 ${label}から冒険を再開！`);
+}
+
+function confirmDelete(slotNum) {
+  const data = loadFromSlot(slotNum);
+  if (!data) return;
+  if (!confirm(`第${slotNum}の書のデータを削除しますか？\nこの操作は取り消せません。`)) return;
+  deleteSlot(slotNum);
+  renderSaveSlots(_saveMode);
+  showToast('🗑 データを削除しました');
+}
+
+function closeSaveScreen() {
+  show(_saveReturnScreen);
+  if (_saveReturnScreen === 'screen-battle' && !G.currentQ) loadQuestion();
+}
+
+/* ── Export / Import (cross-device portability) ── */
+function exportSaveData() {
+  const allData = {};
+  for (let i = 0; i <= 3; i++) {
+    const d = loadFromSlot(i);
+    if (d) allData[i === 0 ? 'auto' : `slot${i}`] = d;
+  }
+  if (Object.keys(allData).length === 0) {
+    showToast('❌ エクスポートするデータがありません');
+    return;
+  }
+  const json = JSON.stringify({ app: 'sharoushi_quest_v1', exportedAt: new Date().toLocaleString('ja-JP'), saves: allData }, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `sharoushi_quest_save_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('📤 セーブデータをエクスポートしました');
+}
+
+function importSaveData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const obj = JSON.parse(e.target.result);
+      if (!obj.app || obj.app !== 'sharoushi_quest_v1') {
+        alert('このファイルは社労士クエストのデータではありません。');
+        return;
+      }
+      if (!confirm('セーブデータをインポートします。\n現在のデータは上書きされます。よろしいですか？')) return;
+      const saves = obj.saves || {};
+      let count = 0;
+      if (saves.auto)  { localStorage.setItem(SAVE_PREFIX + 0, JSON.stringify(saves.auto));  count++; }
+      if (saves.slot1) { localStorage.setItem(SAVE_PREFIX + 1, JSON.stringify(saves.slot1)); count++; }
+      if (saves.slot2) { localStorage.setItem(SAVE_PREFIX + 2, JSON.stringify(saves.slot2)); count++; }
+      if (saves.slot3) { localStorage.setItem(SAVE_PREFIX + 3, JSON.stringify(saves.slot3)); count++; }
+      renderSaveSlots(_saveMode);
+      refreshTitleButtons();
+      showToast(`📥 ${count}件のデータをインポートしました`);
+    } catch(err) {
+      alert('ファイルの読み込みに失敗しました。\n正しいJSONファイルを選択してください。');
+    }
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+/* ── Title screen: show load button if save exists ── */
+function refreshTitleButtons() {
+  const loadBtn = document.getElementById('btn-load-title');
+  if (!loadBtn) return;
+
+  // Check for auto-save first
+  const autoData = loadFromSlot(AUTO_SLOT);
+  const anySlot  = hasAnySave();
+
+  if (autoData) {
+    const acc = autoData.total > 0 ? Math.round(autoData.correct / autoData.total * 100) : 0;
+    loadBtn.style.display = 'block';
+    loadBtn.innerHTML = `📖 ぼうけんをよむ<br><span style="font-size:9px;color:#8899aa;">${autoData.jobEmoji} ${autoData.job} / Lv.${autoData.level} / 正解${autoData.correct}問（${acc}%）</span>`;
+    loadBtn.onclick = () => {
+      if (confirm(`前回のデータを読み込みますか？\n（${autoData.savedAt}）`)) {
+        applyState(autoData);
+        updateUI();
+        updateJobDisplay();
+        G.currentQ = null;
+        queue = [];
+        qIdx  = 0;
+        startBattle();
+        showToast('📖 前回の冒険を再開！');
+      }
+    };
+  } else if (anySlot) {
+    loadBtn.style.display = 'block';
+    loadBtn.innerHTML = '📖 ぼうけんをよむ';
+    loadBtn.onclick = () => showSaveScreen('load');
+  } else {
+    loadBtn.style.display = 'none';
+  }
+}
+
+/* ================================================
+   INIT
+   ================================================ */
+updateUI();
+refreshTitleButtons();
+</script>
+</body>
+</html>
