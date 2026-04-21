@@ -957,12 +957,554 @@ body {
 @keyframes toast-out { from{opacity:1;} to{opacity:0;} }
 
 /* =========================================
+   GAME OVER SCREEN
+   ========================================= */
+#screen-gameover {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  min-height: 600px;
+  background: radial-gradient(ellipse at center, #1a0000 0%, #0a0000 60%, #000000 100%);
+  border: 4px solid #880000;
+  position: relative;
+  overflow: hidden;
+}
+/* 血のような赤いノイズ演出 */
+#screen-gameover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 300px 80px at 50% 30%, rgba(200,0,0,0.08) 0%, transparent 70%),
+    repeating-linear-gradient(0deg, transparent 0px, transparent 3px, rgba(100,0,0,0.04) 3px, rgba(100,0,0,0.04) 4px);
+  pointer-events: none;
+  z-index: 0;
+}
+/* ── GAME OVER タイトル ── */
+.go-title-wrap {
+  width: 100%;
+  text-align: center;
+  padding: 40px 16px 16px;
+  position: relative;
+  z-index: 1;
+}
+.go-title {
+  font-size: 40px;
+  color: #cc0000;
+  letter-spacing: 6px;
+  text-shadow:
+    2px 2px 0 #550000,
+    0 0 30px rgba(200,0,0,0.8),
+    0 0 60px rgba(200,0,0,0.4);
+  animation: go-flicker 3s ease-in-out infinite;
+}
+@keyframes go-flicker {
+  0%,100% { opacity:1; text-shadow:2px 2px 0 #550000,0 0 30px rgba(200,0,0,0.8),0 0 60px rgba(200,0,0,0.4); }
+  45%      { opacity:1; }
+  50%      { opacity:0.85; text-shadow:2px 2px 0 #550000,0 0 10px rgba(200,0,0,0.4); }
+  55%      { opacity:1; }
+}
+.go-sub {
+  font-size: 11px;
+  color: #664444;
+  letter-spacing: 3px;
+  margin-top: 6px;
+}
+/* ── 賢者ダイアログ ── */
+.go-dialogue {
+  flex: 1;
+  width: 100%;
+  padding: 0 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+  z-index: 1;
+}
+.go-npc {
+  font-size: 52px;
+  text-align: center;
+  filter: drop-shadow(0 0 12px rgba(255,180,60,0.6));
+  animation: float 3s ease-in-out infinite;
+}
+.go-text-box {
+  background: #1a0808;
+  border: 3px solid #882222;
+  padding: 14px 18px;
+  font-size: 13px;
+  line-height: 2.1;
+  color: #ffcccc;
+  white-space: pre-line;
+  position: relative;
+  min-height: 120px;
+}
+.go-text-box::before { content:'◆'; position:absolute; top:4px; left:4px;  font-size:7px; color:#550000; }
+.go-text-box::after  { content:'◆'; position:absolute; bottom:4px; right:4px; font-size:7px; color:#550000; }
+.go-npc-name {
+  color: #ffaa44;
+  font-size: 11px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #441111;
+  padding-bottom: 5px;
+}
+.go-page {
+  text-align: center;
+  font-size: 10px;
+  color: #553333;
+}
+.go-cursor {
+  display: inline-block;
+  animation: blink 0.7s step-end infinite;
+  color: #ff8888;
+}
+@keyframes blink { 50% { opacity: 0; } }
+/* ── 死亡エフェクト（倒れるプレイヤー）── */
+.go-dead-player {
+  font-size: 48px;
+  text-align: center;
+  filter: grayscale(1) brightness(0.4);
+  transform: rotate(90deg);
+  display: block;
+  margin: 0 auto 4px;
+  animation: go-fade-in 1s ease-out;
+}
+@keyframes go-fade-in { from { opacity:0; transform:rotate(45deg) scale(0.5); } to { opacity:1; transform:rotate(90deg) scale(1); } }
+/* ── 復活ボタン ── */
+.go-footer {
+  width: 100%;
+  padding: 0 16px 24px;
+  position: relative;
+  z-index: 1;
+}
+.go-retry-btn {
+  display: block;
+  width: 100%;
+  background: linear-gradient(180deg, #660000 0%, #440000 100%);
+  border: 3px solid #cc3333;
+  color: #ffcccc;
+  font-family: inherit;
+  font-size: 14px;
+  letter-spacing: 3px;
+  padding: 16px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+  position: relative;
+}
+.go-retry-btn:hover {
+  background: linear-gradient(180deg, #880000 0%, #660000 100%);
+  color: #fff;
+  box-shadow: 0 0 20px rgba(200,0,0,0.5);
+}
+.go-retry-btn:active { transform: scale(0.98); }
+.go-retry-btn::before { content:'◆'; position:absolute; top:5px; left:8px;  font-size:7px; color:#661111; }
+.go-retry-btn::after  { content:'◆'; position:absolute; top:5px; right:8px; font-size:7px; color:#661111; }
+
+/* =========================================
    RESPONSIVE
    ========================================= */
 @media (max-width: 500px) {
   body { padding: 0; }
   #game { width: 100%; }
 }
+
+/* =========================================
+   ③ TIMER BAR
+   ========================================= */
+#timer-wrap {
+  margin: 0 8px 4px;
+  display: none;
+}
+.timer-label-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: #6677aa;
+  margin-bottom: 2px;
+}
+#timer-sec { color: #ffee44; font-weight: bold; }
+.timer-outer {
+  height: 7px;
+  background: #100022;
+  border: 1px solid #442266;
+  overflow: hidden;
+}
+#timer-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff3344 0%, #ffaa22 50%, #44ff88 100%);
+  transition: width 0.25s linear;
+  position: relative;
+}
+#timer-fill::after {
+  content:'';
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(90deg,transparent 0,transparent 9px,rgba(0,0,0,0.25) 9px,rgba(0,0,0,0.25) 10px);
+}
+
+/* =========================================
+   ② SKILL PANEL
+   ========================================= */
+#skill-panel {
+  display: none;
+  margin: 0 8px 5px;
+  background: #000030;
+  border: 2px solid #4455aa;
+  padding: 7px 10px;
+}
+.sp-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+.sp-label { font-size: 9px; color: #ffaa44; letter-spacing: 1px; }
+.sp-val   { font-size: 9px; color: #aabbff; }
+.sp-bar-outer {
+  height: 5px;
+  background: #110033;
+  border: 1px solid #333366;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+#sp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6633ff, #aa44ff, #ff88ff);
+  transition: width 0.4s;
+}
+.skill-btns { display: flex; gap: 5px; }
+.skill-btn {
+  flex: 1;
+  background: #001044;
+  border: 1px solid #334499;
+  color: #8899cc;
+  padding: 5px 4px;
+  font-family: inherit;
+  font-size: 9px;
+  cursor: pointer;
+  transition: all 0.12s;
+  text-align: center;
+  line-height: 1.6;
+}
+.skill-btn:hover:not(:disabled) { background: #002299; border-color: #6688ff; color: #fff; }
+.skill-btn:disabled { opacity: 0.35; cursor: default; }
+.skill-btn.active { background: #002a00; border-color: #44ee44; color: #88ff88; }
+.skill-cost { display: block; font-size: 8px; color: #6677aa; }
+
+/* =========================================
+   ① BOSS BATTLE
+   ========================================= */
+#overlay-boss {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(30,0,0,0.97);
+  z-index: 210;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 16px;
+}
+.boss-announce-title {
+  font-size: 22px;
+  color: #ff4444;
+  letter-spacing: 4px;
+  text-shadow: 2px 2px 0 #550000, 0 0 30px rgba(255,0,0,0.8);
+  animation: pulse 0.4s ease-in-out infinite alternate;
+}
+.boss-sprite { font-size: 88px; animation: monster-idle 1.5s ease-in-out infinite; filter: drop-shadow(0 0 30px rgba(255,60,60,0.9)); }
+.boss-name { font-size: 16px; color: #ffaa44; letter-spacing: 2px; }
+.boss-hp-wrap { width: 280px; }
+.boss-hp-label { display: flex; justify-content: space-between; font-size: 10px; color: #ff6666; margin-bottom: 3px; }
+.boss-hp-outer {
+  height: 14px;
+  background: #1a0000;
+  border: 2px solid #882222;
+  overflow: hidden;
+  position: relative;
+}
+#boss-hp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #cc0000, #ff4400, #ff8800);
+  transition: width 0.6s;
+  position: relative;
+}
+#boss-hp-fill::after {
+  content:'';
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(90deg,transparent 0,transparent 19px,rgba(0,0,0,0.3) 19px,rgba(0,0,0,0.3) 20px);
+}
+.boss-hint { font-size: 11px; color: #cc6666; text-align: center; line-height: 1.9; }
+#boss-start-btn {
+  background: linear-gradient(180deg,#660000,#440000);
+  border: 2px solid #cc3333;
+  color: #ffcccc;
+  font-family: inherit;
+  font-size: 13px;
+  letter-spacing: 3px;
+  padding: 12px 30px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+#boss-start-btn:hover { background: linear-gradient(180deg,#880000,#660000); color:#fff; }
+
+/* Boss active indicator */
+.boss-indicator {
+  display: none;
+  background: #1a0000;
+  border: 2px solid #882222;
+  margin: 4px 8px;
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  color: #ff6666;
+}
+.boss-ind-bar { flex: 1; height: 6px; background: #330000; border: 1px solid #660000; overflow:hidden; }
+.boss-ind-fill { height:100%; background: linear-gradient(90deg,#cc0000,#ff4400); transition:width 0.4s; }
+
+/* =========================================
+   ④ ACHIEVEMENT SYSTEM
+   ========================================= */
+#overlay-achievement {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 250;
+  background: rgba(0,0,30,0.97);
+  border: 2px solid #ffaa00;
+  padding: 10px 20px;
+  font-size: 12px;
+  color: #ffee44;
+  text-align: center;
+  animation: achievement-in 0.4s ease-out;
+  pointer-events: none;
+  white-space: nowrap;
+}
+@keyframes achievement-in {
+  from { opacity:0; transform:translateX(-50%) translateY(-20px) scale(0.8); }
+  to   { opacity:1; transform:translateX(-50%) translateY(0)     scale(1); }
+}
+.ach-title-small { font-size: 9px; color: #ffaa44; letter-spacing: 2px; margin-bottom: 3px; }
+
+#screen-achievement {
+  display: none;
+  flex-direction: column;
+  border: 4px solid #6688ff;
+  background: #000018;
+  padding: 12px;
+  gap: 10px;
+  min-height: 600px;
+}
+.ach-screen-title { text-align:center; color:#ffee44; font-size:15px; letter-spacing:3px; border-bottom:2px solid #6688ff; padding-bottom:8px; }
+.ach-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.ach-badge {
+  background: #000040;
+  border: 2px solid #334488;
+  padding: 10px 8px;
+  text-align: center;
+  transition: all 0.15s;
+}
+.ach-badge.earned { border-color: #ffaa00; background: #1a1000; }
+.ach-badge.earned .ach-icon { filter: none; }
+.ach-icon { font-size: 26px; display:block; filter:grayscale(1) brightness(0.3); margin-bottom:4px; }
+.ach-badge.earned .ach-icon { filter: drop-shadow(0 0 8px rgba(255,200,0,0.7)); }
+.ach-name { font-size: 9px; color: #556688; line-height: 1.6; }
+.ach-badge.earned .ach-name { color: #ffcc88; }
+.ach-cond { font-size: 8px; color: #334455; margin-top: 2px; }
+.ach-badge.earned .ach-cond { color: #886633; }
+
+/* =========================================
+   ⑤ WORLD MAP SCREEN
+   ========================================= */
+#screen-worldmap {
+  display: none;
+  flex-direction: column;
+  border: 4px solid #6688ff;
+  background: #000018;
+  padding: 12px;
+  gap: 10px;
+  min-height: 600px;
+}
+.wm-title { text-align:center; color:#ffee44; font-size:15px; letter-spacing:3px; border-bottom:2px solid #6688ff; padding-bottom:8px; }
+.wm-desc { font-size:10px; color:#6677aa; text-align:center; line-height:1.8; }
+.wm-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.wm-area {
+  background: #000040;
+  border: 2px solid #223366;
+  padding: 12px 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+  text-align: center;
+}
+.wm-area.locked { opacity: 0.4; cursor: not-allowed; }
+.wm-area.unlocked:hover { background: #001060; border-color: #6688cc; }
+.wm-area.current { border-color: #ffee44; background: #1a1400; }
+.wm-area-icon { font-size: 30px; display:block; margin-bottom:5px; }
+.wm-area-name { font-size: 11px; color: #ffcc44; margin-bottom: 3px; }
+.wm-area-sub  { font-size: 9px; color: #6677aa; }
+.wm-progress-bar { height: 4px; background: #110022; border: 1px solid #333366; margin-top: 6px; overflow: hidden; }
+.wm-progress-fill { height:100%; background: linear-gradient(90deg,#4444ff,#44aaff); }
+.wm-lock-icon { position:absolute; top:4px; right:6px; font-size:10px; color:#334488; }
+.wm-current-badge { position:absolute; top:4px; left:6px; font-size:8px; color:#ffee44; }
+.wm-unlock-cond { font-size:8px; color:#443366; margin-top:4px; }
+
+/* =========================================
+   ⑥ DAILY QUEST PANEL
+   ========================================= */
+#daily-panel {
+  display: none;
+  margin: 0 8px 5px;
+  background: #00001a;
+  border: 2px solid #224488;
+  padding: 8px 10px;
+}
+.dq-panel-title { font-size: 10px; color: #88aaff; letter-spacing: 1px; margin-bottom: 5px; display:flex; justify-content:space-between; align-items:center; }
+.dq-streak-badge { font-size:9px; color:#ffaa44; border:1px solid #664400; padding:1px 6px; }
+.dq-missions { display: flex; flex-direction: column; gap: 3px; }
+.dq-mission {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: #7788aa;
+  padding: 3px 6px;
+  background: #000030;
+  border: 1px solid #223355;
+}
+.dq-mission.done { color: #44ee44; border-color: #224422; background: #001800; }
+.dq-mission-icon { font-size: 12px; min-width: 16px; }
+.dq-mission.done .dq-mission-icon::before { content: '✓'; color: #44ee44; font-size: 10px; }
+.dq-bonus { font-size: 9px; color: #446633; text-align: right; margin-top: 3px; }
+.dq-all-done { text-align:center; color:#ffee44; font-size:11px; padding:4px; border:1px solid #664400; background:#1a0e00; margin-top:3px; display:none; }
+
+/* =========================================
+   ⑦ RANKING SCREEN
+   ========================================= */
+#screen-ranking {
+  display: none;
+  flex-direction: column;
+  border: 4px solid #6688ff;
+  background: #000018;
+  padding: 12px;
+  gap: 10px;
+  min-height: 600px;
+}
+.rk-title { text-align:center; color:#ffee44; font-size:15px; letter-spacing:3px; border-bottom:2px solid #6688ff; padding-bottom:8px; }
+.rk-your-card {
+  background: #1a1400;
+  border: 2px solid #ffaa00;
+  padding: 12px;
+  text-align: center;
+  position: relative;
+}
+.rk-your-card::before { content:'◆'; position:absolute; top:4px; left:4px; font-size:7px; color:#664400; }
+.rk-your-rank { font-size: 28px; color: #ffee44; }
+.rk-your-rank span { font-size: 13px; }
+.rk-your-pct  { font-size: 13px; color: #ffaa44; margin: 4px 0; }
+.rk-your-stats { font-size: 10px; color: #8899aa; margin-top: 4px; }
+.rk-list-title { font-size: 10px; color: #6677aa; letter-spacing: 2px; border-bottom: 1px solid #223355; padding-bottom: 4px; }
+.rk-entry {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  padding: 5px 6px;
+  border-bottom: 1px solid rgba(50,80,120,0.2);
+}
+.rk-entry.you { background: rgba(255,200,0,0.07); border-color: rgba(255,170,0,0.3); color: #ffee44; }
+.rk-num  { width: 22px; color: #554433; font-size: 11px; }
+.rk-num.top3 { color: #ffcc44; }
+.rk-player { flex: 1; color: #aabbcc; }
+.rk-entry.you .rk-player { color: #ffee44; }
+.rk-score { color: #88aaff; }
+
+/* =========================================
+   ⑧ STORY MODE SCREEN
+   ========================================= */
+#screen-story {
+  display: none;
+  flex-direction: column;
+  border: 4px solid #8855ff;
+  background: linear-gradient(180deg, #050010 0%, #0a0028 100%);
+  min-height: 600px;
+}
+.story-header {
+  background: #110033;
+  border-bottom: 2px solid #8855ff;
+  padding: 8px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+}
+.story-chapter { color: #aa88ff; letter-spacing: 2px; }
+.story-progress { color: #556688; font-size: 10px; }
+.story-body { flex:1; padding: 16px; display:flex; flex-direction:column; gap:14px; }
+.story-npc { font-size: 58px; text-align:center; animation:float 2s infinite; filter:drop-shadow(0 0 16px rgba(180,120,255,0.8)); }
+.story-npc-name { font-size: 11px; color: #bb88ff; letter-spacing: 1px; margin-bottom: 6px; padding-bottom: 5px; border-bottom:1px solid #332255; }
+.story-text-box {
+  background: #0a0030;
+  border: 3px solid #8855ff;
+  padding: 14px 18px;
+  font-size: 13px;
+  line-height: 2.1;
+  color: #ddeeff;
+  white-space: pre-line;
+  flex: 1;
+  position: relative;
+}
+.story-text-box::before { content:'◆'; position:absolute; top:4px; left:4px; font-size:7px; color:#442299; }
+.story-text-box::after  { content:'◆'; position:absolute; bottom:4px; right:4px; font-size:7px; color:#442299; }
+.story-mission-box {
+  background: #0a0040;
+  border: 2px solid #5533aa;
+  padding: 8px 12px;
+  font-size: 10px;
+  color: #8877cc;
+  line-height: 1.9;
+}
+.story-mission-title { color: #aa88ff; margin-bottom: 4px; letter-spacing: 1px; font-size: 11px; }
+.story-footer { padding: 12px 16px; border-top: 2px solid #332255; display:flex; justify-content:space-between; gap:8px; }
+.story-btn {
+  flex: 1;
+  background: #0a0040;
+  border: 2px solid #5533aa;
+  color: #9988cc;
+  padding: 10px;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+.story-btn:hover { background: #1a0088; border-color: #aa77ff; color: #fff; }
+.story-btn.primary { background: #1a0055; border-color: #9966ff; color: #cc99ff; }
+
+/* Quest count badge in battle */
+.quest-counter {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0,0,20,0.8);
+  border: 1px solid #334466;
+  padding: 2px 6px;
+  font-size: 9px;
+  color: #6677aa;
+  z-index: 6;
+}
+.quest-counter.boss-near { color: #ff6666; border-color: #882222; animation: blink-dq 0.7s steps(1) infinite; }
 </style>
 </head>
 <body>
@@ -993,7 +1535,7 @@ body {
     </div>
     <div class="title-char-item">
       <span class="title-char-icon" style="animation-delay:0.4s;">📜</span>
-      <span class="title-char-label">賢者GPT</span>
+      <span class="title-char-label">賢者</span>
     </div>
     <div class="title-char-item">
       <span class="title-char-icon" style="animation-delay:0.8s;">🧙‍♂️</span>
@@ -1022,7 +1564,7 @@ body {
   <div class="title-story">
     「法令の森」「年金の山」「労災の谷」「改正の城」<br>
     <span>知識の剣を手に、国家試験という名のボスを倒せ！</span><br>
-    賢者GPTがあなたの冒険を導く――
+    賢者があなたの冒険を導く――
   </div>
 
   <!-- Buttons -->
@@ -1138,6 +1680,8 @@ body {
 
     <!-- Combo badge -->
     <div class="combo-badge" id="combo-badge">🔥 コンボ ×3!</div>
+    <!-- Quest counter -->
+    <div class="quest-counter" id="quest-counter">0/10</div>
   </div>
 
   <!-- Status bar -->
@@ -1167,6 +1711,53 @@ body {
   <!-- Message box -->
   <div class="msg-box" id="msg-box">冒険を始めよう！<span class="msg-cursor">▼</span></div>
 
+  <!-- ③ Timer bar -->
+  <div id="timer-wrap">
+    <div class="timer-label-row">
+      <span>⏱ のこり時間</span>
+      <span id="timer-sec">45</span>秒
+    </div>
+    <div class="timer-outer"><div id="timer-fill" style="width:100%"></div></div>
+  </div>
+
+  <!-- ② Skill panel -->
+  <div id="skill-panel">
+    <div class="sp-label-row">
+      <span class="sp-label">✨ スキルポイント</span>
+      <span class="sp-val" id="sp-val">0 / 10</span>
+    </div>
+    <div class="sp-bar-outer"><div id="sp-fill" style="width:0%"></div></div>
+    <div class="skill-btns">
+      <button class="skill-btn" id="sk-eliminate" onclick="useSkill('eliminate')">
+        🗑️ 消去法<span class="skill-cost">SP×3</span>
+      </button>
+      <button class="skill-btn" id="sk-timeext" onclick="useSkill('timeext')">
+        ⏳ 時間延長<span class="skill-cost">SP×2</span>
+      </button>
+      <button class="skill-btn" id="sk-exp2x" onclick="useSkill('exp2x')">
+        ⭐ EXP×2<span class="skill-cost">SP×4</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ① Boss active indicator -->
+  <div id="boss-indicator" style="display:none;" class="boss-indicator">
+    <span>👹 ボスバトル</span>
+    <div class="boss-ind-bar"><div class="boss-ind-fill" id="boss-ind-fill" style="width:100%"></div></div>
+    <span id="boss-ind-label">あと3問正解で撃破!</span>
+  </div>
+
+  <!-- ⑥ Daily quest panel -->
+  <div id="daily-panel">
+    <div class="dq-panel-title">
+      📅 デイリークエスト
+      <span class="dq-streak-badge" id="dq-streak-badge">🔥 連続1日</span>
+    </div>
+    <div class="dq-missions" id="dq-missions"></div>
+    <div class="dq-bonus">完了でボーナスEXP +100！</div>
+    <div class="dq-all-done" id="dq-all-done">🎉 本日のクエスト完了！ボーナス獲得！</div>
+  </div>
+
   <!-- Question area -->
   <div id="q-area" style="display:none;">
     <div class="q-box">
@@ -1192,8 +1783,9 @@ body {
   <!-- Nav bar -->
   <div class="nav-bar">
     <button class="nav-btn" onclick="showBattle()">⚔ バトル</button>
-    <button class="nav-btn" onclick="showStatus()">📊 ステータス</button>
-    <button class="nav-btn" onclick="startReview()">🔄 復習</button>
+    <button class="nav-btn" onclick="showWorldMap()">🗺 マップ</button>
+    <button class="nav-btn" onclick="showAchievements()">🏆 実績</button>
+    <button class="nav-btn" onclick="showRanking()">👑 ランク</button>
     <button class="nav-btn" onclick="showSaveScreen('save')">💾 セーブ</button>
   </div>
 </div>
@@ -1237,7 +1829,105 @@ body {
   <button class="act-btn" onclick="showBattle()">⚔ バトルに戻る</button>
 </div>
 
+<!-- ═══════════════════════════════════════
+     GAME OVER SCREEN
+═══════════════════════════════════════ -->
+<div id="screen-gameover">
+
+  <!-- GAME OVER タイトル -->
+  <div class="go-title-wrap">
+    <div class="go-title">GAME  OVER</div>
+    <div class="go-sub">── 知識の試練に倒れた ──</div>
+  </div>
+
+  <!-- 賢者ダイアログ -->
+  <div class="go-dialogue">
+    <div class="go-npc" id="go-npc">📜</div>
+    <div class="go-text-box">
+      <div class="go-npc-name" id="go-npc-name">賢者</div>
+      <div id="go-content"></div>
+      <span class="go-cursor" id="go-cursor" style="display:none;">▼</span>
+    </div>
+    <div class="go-page" id="go-page"></div>
+  </div>
+
+  <!-- 復活ボタン -->
+  <div class="go-footer">
+    <button class="go-retry-btn" id="go-btn" onclick="goNext()" style="display:none;">
+      つぎへ ▶
+    </button>
+  </div>
+
+</div><!-- #screen-gameover -->
+
+<!-- ⑤ WORLD MAP SCREEN -->
+<div id="screen-worldmap">
+  <div class="wm-title">🗺 ワールドマップ</div>
+  <div class="wm-desc">エリアを選んで挑戦しよう。前のエリアを5問クリアすると次が解放される。</div>
+  <div class="wm-grid" id="wm-grid"></div>
+  <button class="act-btn" onclick="showBattle()" style="margin-top:8px;">⚔ バトルに戻る</button>
+</div>
+
+<!-- ④ ACHIEVEMENT SCREEN -->
+<div id="screen-achievement">
+  <div class="ach-screen-title">🏆 実績</div>
+  <div class="ach-grid" id="ach-grid"></div>
+  <button class="act-btn" onclick="showBattle()" style="margin-top:8px;">⚔ バトルに戻る</button>
+</div>
+
+<!-- ⑦ RANKING SCREEN -->
+<div id="screen-ranking">
+  <div class="rk-title">👑 全国ランキング</div>
+  <div class="rk-your-card" id="rk-your-card"></div>
+  <div class="rk-list-title">📋 ランキングトップ10</div>
+  <div id="rk-list"></div>
+  <div style="font-size:9px;color:#334455;text-align:center;margin-top:6px;">※ 仮想ランキングです（スコア算出による推定）</div>
+  <button class="act-btn" onclick="showBattle()" style="margin-top:8px;">⚔ バトルに戻る</button>
+</div>
+
+<!-- ⑧ STORY MODE SCREEN -->
+<div id="screen-story">
+  <div class="story-header">
+    <span class="story-chapter" id="story-chapter-label">📖 第1章</span>
+    <span class="story-progress" id="story-progress-label">1/5</span>
+  </div>
+  <div class="story-body">
+    <div class="story-npc" id="story-npc">🧓</div>
+    <div class="story-text-box">
+      <div class="story-npc-name" id="story-npc-name">長老</div>
+      <div id="story-content"></div>
+    </div>
+    <div class="story-mission-box" id="story-mission-box" style="display:none;">
+      <div class="story-mission-title">⚡ ミッション</div>
+      <div id="story-mission-text"></div>
+    </div>
+  </div>
+  <div class="story-footer">
+    <button class="story-btn" onclick="showBattle()">⚔ あとで</button>
+    <button class="story-btn primary" onclick="nextStory()" id="story-next-btn">つぎへ ▶</button>
+  </div>
+</div>
+
 </div><!-- #game -->
+
+<!-- ① BOSS BATTLE OVERLAY -->
+<div id="overlay-boss">
+  <div class="boss-announce-title">⚠️ ボスが現れた！⚠️</div>
+  <div class="boss-sprite" id="boss-sprite">👹</div>
+  <div class="boss-name" id="boss-name">ろうきほうの大魔王</div>
+  <div class="boss-hp-wrap">
+    <div class="boss-hp-label"><span>BOSS HP</span><span id="boss-hp-label-val">3/3</span></div>
+    <div class="boss-hp-outer"><div id="boss-hp-fill" style="width:100%"></div></div>
+  </div>
+  <div class="boss-hint">3問連続正解でボスを撃破！<br>不正解でHPが回復するぞ！</div>
+  <button id="boss-start-btn" onclick="startBossMode()">⚔ ボスに挑む！</button>
+</div>
+
+<!-- ④ ACHIEVEMENT POPUP OVERLAY -->
+<div id="overlay-achievement">
+  <div class="ach-title-small">🏆 実績解除！</div>
+  <div id="ach-popup-text">初めての正解！</div>
+</div>
 
 <!-- Level-up overlay -->
 <div id="overlay-levelup">
@@ -1263,13 +1953,40 @@ const G = {
   answered: false,
   fields: {
     '労基':{ c:0,t:0 }, '安衛':{ c:0,t:0 }, '労災':{ c:0,t:0 },
-    '雇保':{ c:0,t:0 }, '健保':{ c:0,t:0 }, '厚年':{ c:0,t:0 },
-    '国年':{ c:0,t:0 }, '社一':{ c:0,t:0 }
+    '雇保':{ c:0,t:0 }, '徴収':{ c:0,t:0 }, '労一':{ c:0,t:0 },
+    '健保':{ c:0,t:0 }, '国年':{ c:0,t:0 }, '厚年':{ c:0,t:0 },
+    '社一':{ c:0,t:0 }
   },
   cond: {
     scrollRead: 0, reformQ: 0, reformOK: 0,
     socialQ: 0, socialOK: 0, mockPassed: false
-  }
+  },
+  /* ② Skill system */
+  sp: 0, maxSp: 10,
+  skillExp2xActive: false,
+  skillEliminateUsed: false,
+  /* ① Boss battle */
+  questCount: 0,      /* questions answered since last boss (or start) */
+  bossMode: false,
+  bossHp: 3, bossMaxHp: 3,
+  bossCorrect: 0,     /* consecutive correct in boss battle */
+  /* ③ Timer */
+  timerSec: 45,
+  timerMax: 45,
+  _timerInterval: null,
+  /* ④ Achievements */
+  achievements: new Set(),
+  /* ⑤ World map — current selected field (null = all) */
+  selectedField: null,
+  /* ⑥ Daily quest */
+  dailyDate: '',
+  dailyDone: [false, false, false],
+  dailyBonusGiven: false,
+  dailyStreak: 0,
+  /* ⑧ Story mode */
+  storyChapter: 0,
+  storyScene: 0,
+  storyActive: false,
 };
 
 /* ================================================
@@ -2714,8 +3431,8 @@ const JOBS = [
 const INTRO = [
   { npc:'🧓', name:'長老',
     text:'「おお、若者よ… よくぞこの地にたどり着いた。\n\nここは "法令の大地"。この世界では、\n知識のある者だけが\n"社会保険労務士"の称号を\n手にすることができる。」' },
-  { npc:'📜', name:'賢者GPT',
-    text:'「我は"知識の賢者GPT"。あなたの学習の旅を\nサポートする者じゃ。\n\n「法令の森」「年金の山」「労災の谷」「改正の城」\nを踏破し、最終ボスたる "本試験" を倒す冒険\nに出るがよい！」' },
+  { npc:'📜', name:'賢者',
+    text:'「我は"知識の賢者"。あなたの学習の旅を\nサポートする者じゃ。\n\n「法令の森」「年金の山」「労災の谷」「改正の城」\nを踏破し、最終ボスたる "本試験" を倒す冒険\nに出るがよい！」' },
   { npc:'🧙‍♂️', name:'あなた（見習い社労士）',
     text:'「よし、わかった！\n\n「知識の剣（条文）」と\n「理解の盾（具体例）」と\n「復習の魔法（再出題）」を使い、\n必ず合格を掴み取る！\n\nその一問が、未来を変える――」' },
 ];
@@ -2742,7 +3459,7 @@ function shuffle(a) {
 /* ================================================
    SCREEN MANAGEMENT
    ================================================ */
-const SCREENS = ['screen-title','screen-intro','screen-battle','screen-status','screen-save'];
+const SCREENS = ['screen-title','screen-intro','screen-battle','screen-status','screen-save','screen-gameover','screen-worldmap','screen-achievement','screen-ranking','screen-story'];
 function show(id) {
   SCREENS.forEach(s => document.getElementById(s).style.display = 'none');
   const el = document.getElementById(id);
@@ -2857,11 +3574,38 @@ function loadQuestion() {
   document.getElementById('action-row').style.display = 'none';
   document.getElementById('result-badge').style.display = 'none';
   document.getElementById('expl-area').style.display  = 'none';
+
+  // ③ Start timer
+  const timerSecs = G.bossMode ? 30 : 45;
+  setTimeout(() => startTimer(timerSecs), 50);
+
+  // ② Reset skill state for new question
+  G.skillEliminateUsed = false;
+  updateSkillUI();
+
+  // ① Boss mode indicator
+  if (G.bossMode) updateBossIndicator();
+
+  // Quest counter
+  const qcEl = document.getElementById('quest-counter');
+  if (qcEl) {
+    const n = G.questCount % 10;
+    const near = (10 - n) <= 2;
+    qcEl.textContent = `${n}/10`;
+    qcEl.className   = 'quest-counter' + (near ? ' boss-near' : '');
+  }
 }
 
 function answer(sel) {
   if (G.answered) return;
   G.answered = true;
+
+  // ③ Stop timer, record time bonus
+  stopTimer();
+  const _timerBonusVal = (sel !== -1 && sel === (G.currentQ||{}).ans) ? timerBonus() : 0;
+  const _exp2xActive   = G.skillExp2xActive;
+  if (_exp2xActive) G.skillExp2xActive = false;
+
   const q = G.currentQ;
   const ok = sel === q.ans;
 
@@ -2869,7 +3613,7 @@ function answer(sel) {
   if (!G.fields[q.f]) G.fields[q.f] = { c:0,t:0 };
   G.fields[q.f].t++;
   G.total++;
-  if (q.f === '社一') G.cond.socialQ++;
+  if (q.f === '社一' || q.f === '労一') G.cond.socialQ++;
   if (q.tp === 'scroll') G.cond.scrollRead++;
   if (q.lv >= 18) G.cond.reformQ++;
 
@@ -2886,11 +3630,32 @@ function answer(sel) {
     if (G.streak > G.bestStreak) G.bestStreak = G.streak;
     G.fields[q.f].c++;
     G.consecutiveWrong = 0;
-    if (q.f === '社一') G.cond.socialOK++;
+    if (q.f === '社一' || q.f === '労一') G.cond.socialOK++;
     if (q.lv >= 18) G.cond.reformOK++;
 
-    const pts = q.pt || 10;
-    addExp(pts);
+    const pts      = q.pt || 10;
+    const expMult  = _exp2xActive ? 2 : 1;
+    addExp(pts * expMult);
+    if (_exp2xActive) {
+      setTimeout(() => setMsg(`⭐ EXP×2 発動！\n＋${pts*2} EXP 獲得！（通常の2倍）`, true), 50);
+    }
+
+    // ② Gain SP
+    gainSP(1);
+
+    // ③ Timer bonus EXP
+    if (_timerBonusVal > 0) {
+      setTimeout(() => addExp(_timerBonusVal), 200);
+    }
+
+    // ① Boss HP
+    if (G.bossMode) handleBossAnswer(true);
+
+    // ① Increment quest count (only on correct)
+    G.questCount++;
+    const _n = G.questCount % 10;
+    const _qcEl = document.getElementById('quest-counter');
+    if (_qcEl) { _qcEl.textContent = `${_n}/10`; _qcEl.className = 'quest-counter' + (10-_n<=2?' boss-near':''); }
 
     // Monster defeated
     document.getElementById('m-hp-fill').style.width = '0%';
@@ -2899,7 +3664,8 @@ function answer(sel) {
     addFlash();
 
     const streakNote = G.streak >= 3 ? `\n🔥 ${G.streak}連続正解！すばらしい！` : '';
-    setMsg(`✨ 正解！知識の剣が光った！\n＋${pts} EXP 獲得！${streakNote}`);
+    const timerNote  = _timerBonusVal > 0 ? `\n⏱ タイムボーナス +${_timerBonusVal} EXP！` : '';
+    setMsg(`✨ 正解！知識の剣が光った！\n＋${pts * expMult} EXP 獲得！${streakNote}${timerNote}`);
 
     // Combo badge
     if (G.streak >= 3) {
@@ -2912,6 +3678,23 @@ function answer(sel) {
     showResult(true, '⭐ せいかい！');
     // Auto-save on correct answer
     setTimeout(() => autoSave(), 600);
+    // ④ Achievements
+    setTimeout(() => checkAchievements(), 400);
+    // ⑥ Daily quest
+    checkDailyProgress(q, true);
+    // ⑧ Story mission
+    if (G.storyActive && _storyMissionField && q.f === _storyMissionField) {
+      _storyMissionProgress++;
+      if (_storyMissionProgress >= _storyMissionTarget) {
+        G.storyActive = false;
+        setTimeout(() => {
+          addExp(50);
+          setMsg('🎉 ストーリーミッション完了！ EXP+50 ボーナス！');
+          setTimeout(() => { _storyScene++; G.storyScene = _storyScene; showStoryMode(); }, 1200);
+        }, 800);
+      }
+    }
+    // ① Boss check after 10 correct answers (triggered from nextQuestion)
   } else {
     G.streak = 0;
     G.consecutiveWrong++;
@@ -2934,17 +3717,23 @@ function answer(sel) {
     setMsg(msg);
 
     if (G.hp <= 0) {
-      G.hp = G.maxHp;
-      setTimeout(() => setMsg('🌟 休息して全回復！\n再び冒険へ出発だ！'), 800);
+      G.hp = 0;
+      updateUI();
+      setTimeout(() => showGameOver(), 900);
     }
 
+    // ① Boss HP recover
+    if (G.bossMode) handleBossAnswer(false);
+
     showResult(false, '💀 ちがいます…');
+    // ⑥ Daily quest (wrong also tracked for total-count quests)
+    checkDailyProgress(q, false);
   }
 
   // Explanation
   const ea = document.getElementById('expl-area');
   ea.style.display = 'block';
-  ea.innerHTML = `<div class="expl-box"><div class="expl-title">📖 解説（賢者GPTより）</div>${escHTML(q.ex)}</div>`;
+  ea.innerHTML = `<div class="expl-box"><div class="expl-title">📖 解説（賢者より）</div>${escHTML(q.ex)}</div>`;
 
   updateUI();
   checkJob();
@@ -2960,6 +3749,11 @@ function showResult(ok, text) {
 }
 
 function nextQuestion() {
+  // ① Check boss trigger every 10 questions answered (based on questCount)
+  if (!G.bossMode && !G.reviewMode && G.questCount > 0 && G.questCount % 10 === 0) {
+    showBossAnnounce();
+    return;
+  }
   loadQuestion();
 }
 
@@ -3047,19 +3841,32 @@ function showStatus() {
   document.getElementById('st-rate').textContent = G.total > 0 ? `${Math.round(G.correct/G.total*100)}%` : '—';
   document.getElementById('st-best').textContent = `${G.bestStreak}問`;
 
-  // Field bars
+  // Field bars — 10科目すべて表示（未出題はグレー）
+  const FIELD_LABELS = {
+    '労基':'①労基', '安衛':'②安衛', '労災':'③労災', '雇保':'④雇保',
+    '徴収':'⑤徴収', '労一':'⑥労一', '健保':'⑦健保', '国年':'⑧国年',
+    '厚年':'⑨厚年', '社一':'⑩社一'
+  };
   const fc = document.getElementById('st-fields');
   fc.innerHTML = '';
   Object.entries(G.fields).forEach(([name, s]) => {
-    if (!s.t) return;
-    const r = Math.round(s.c/s.t*100);
-    fc.innerHTML += `
-      <div class="field-bar">
-        <div class="fb-label"><span>${name}</span><span>${s.c}/${s.t}（${r}%）</span></div>
-        <div class="fb-outer"><div class="fb-fill" style="width:${r}%"></div></div>
-      </div>`;
+    const label = FIELD_LABELS[name] || name;
+    if (!s.t) {
+      fc.innerHTML += `
+        <div class="field-bar" style="opacity:0.4;">
+          <div class="fb-label"><span>${label}</span><span style="color:#445566;">未出題</span></div>
+          <div class="fb-outer"><div class="fb-fill" style="width:0%;background:#334466;"></div></div>
+        </div>`;
+    } else {
+      const r = Math.round(s.c/s.t*100);
+      const color = r >= 80 ? '#44cc88' : r >= 60 ? '#ffcc44' : '#ff6655';
+      fc.innerHTML += `
+        <div class="field-bar">
+          <div class="fb-label"><span>${label}</span><span>${s.c}/${s.t}（${r}%）</span></div>
+          <div class="fb-outer"><div class="fb-fill" style="width:${r}%;background:${color};"></div></div>
+        </div>`;
+    }
   });
-  if (!fc.innerHTML) fc.innerHTML = '<div style="font-size:10px;color:#445566;">まだデータがありません</div>';
 
   // Next job
   const nj = document.getElementById('st-nextjob');
@@ -3070,9 +3877,9 @@ function showStatus() {
       '条文の探求者':`📖 条文問題をあと${Math.max(0,10-G.cond.scrollRead)}問クリア`,
       '改正の先駆者':`⚔️ 法改正問題で正答率80%以上（現在${G.cond.reformQ>0?Math.round(G.cond.reformOK/G.cond.reformQ*100):0}%）`,
       '判例の賢者':  `⚖️ 連続正解5問達成（最高${G.bestStreak}問）`,
-      '常識の守護者':`🛡️ 社一分野で正答率90%以上`,
+      '常識の守護者':`🛡️ 労一・社一分野で正答率90%以上`,
       '試験の勇者':  `🗡️ 模試形式で合格点クリア`,
-      '総合の王者':  `👑 全分野で正答率85%以上`,
+      '総合の王者':  `👑 全10分野で正答率85%以上`,
     };
     if (hints[j.name]) txt += hints[j.name]+'\n';
   });
@@ -3083,6 +3890,91 @@ function showStatus() {
 function showBattle() {
   show('screen-battle');
   if (!G.currentQ) loadQuestion();
+  updateSkillUI();
+  renderDailyQuest();
+}
+
+/* ================================================
+   GAME OVER
+   ================================================ */
+const GO_SCENES = [
+  {
+    npc: '💀',
+    name: '死神',
+    text: '「…お前の魂は、まだここにある。\n\nHP がゼロになった。\n法令の試練に、倒れてしまったのだ。」'
+  },
+  {
+    npc: '📜',
+    name: '賢者',
+    text: '「焦るでない、若者よ。\n\n倒れることは恥ではない。\n同じ問題で何度も転ぶ者こそ、\nやがて最も深く知識を刻む者となる。\n\n間違えた問題は、すべて記録されている。\n復習モードで必ず見直すのだ。」'
+  },
+  {
+    npc: '📜',
+    name: '賢者',
+    text: '「今一度、立ち上がれ。\n\nHP を全回復してやろう。\n苦手な分野こそ、繰り返し挑め。\n\n「復習」ボタンを使えば、\n間違えた問題だけを集中特訓できる。\n\n── さあ、再び冒険の道へ！ ──」'
+  }
+];
+let goIdx = 0;
+
+function showGameOver() {
+  goIdx = 0;
+  show('screen-gameover');
+  renderGoScene();
+}
+
+function renderGoScene() {
+  const sc = GO_SCENES[goIdx];
+  document.getElementById('go-npc').textContent      = sc.npc;
+  document.getElementById('go-npc-name').textContent = sc.name;
+  document.getElementById('go-page').textContent     = `${goIdx + 1} / ${GO_SCENES.length}`;
+
+  // テキストをタイプライター風に表示
+  const el      = document.getElementById('go-content');
+  const cursor  = document.getElementById('go-cursor');
+  const btn     = document.getElementById('go-btn');
+  el.textContent = '';
+  cursor.style.display = 'none';
+  btn.style.display    = 'none';
+
+  const chars = sc.text.split('');
+  let i = 0;
+  function typeNext() {
+    if (i < chars.length) {
+      el.textContent += chars[i++];
+      setTimeout(typeNext, chars[i - 1] === '\n' ? 80 : 28);
+    } else {
+      cursor.style.display = 'inline';
+      btn.style.display    = 'block';
+      // 最終ページはボタンラベルを変える
+      btn.textContent = goIdx < GO_SCENES.length - 1 ? 'つぎへ ▶' : '🌟 復活して再挑戦！';
+      btn.onclick = goIdx < GO_SCENES.length - 1 ? goNext : retryAfterGameOver;
+    }
+  }
+  typeNext();
+}
+
+function goNext() {
+  goIdx++;
+  if (goIdx < GO_SCENES.length) {
+    renderGoScene();
+  } else {
+    retryAfterGameOver();
+  }
+}
+
+function retryAfterGameOver() {
+  // HP全回復
+  G.hp = G.maxHp;
+  G.consecutiveWrong = 0;
+  updateUI();
+  autoSave();
+
+  // バトル画面へ遷移し、問題をリセット
+  show('screen-battle');
+  G.currentQ = null;
+  G.answered = false;
+  setMsg('🌟 HP全回復！\n苦手問題は「復習」で集中特訓しよう！');
+  setTimeout(() => loadQuestion(), 1600);
 }
 
 /* ================================================
@@ -3115,7 +4007,7 @@ function showHelp() {
     '🔄 復習：間違えた問題を再出題\n\n' +
     '問題の種類：択一/穴埋め/〇×等\n\n' +
     '💡 正解→EXP＋レベルアップ\n' +
-    '❌ 不正解→HP減少（0になっても全回復）\n\n' +
+    '❌ 不正解→HP減少\n💀 HP0でゲームオーバー→賢者の諭しを聞いて復活！\n\n' +
     '正答率で職業が進化するぞ！'
   );
 }
@@ -3160,6 +4052,8 @@ let   _saveMode    = 'save'; // 'save' or 'load'
 let   _saveReturnScreen = 'screen-battle';
 
 /* ── Serialize / Deserialize ── */
+/* ── NEW: extend serialize/apply for new state ── */
+const _origSerialize = typeof serializeState === 'function' ? serializeState : null;
 function serializeState() {
   return {
     version:  1,
@@ -3179,6 +4073,14 @@ function serializeState() {
     consecutiveWrong: G.consecutiveWrong,
     fields:   JSON.parse(JSON.stringify(G.fields)),
     cond:     JSON.parse(JSON.stringify(G.cond)),
+    /* New v2 fields */
+    sp:           G.sp,
+    questCount:   G.questCount,
+    achievements: [...G.achievements],
+    selectedField: G.selectedField,
+    storyChapter: G.storyChapter,
+    storyScene:   G.storyScene,
+    dailyStreak:  G.dailyStreak,
   };
 }
 
@@ -3196,8 +4098,30 @@ function applyState(data) {
   G.wrongIds = data.wrongIds || [];
   G.seenIds  = new Set(data.seenIds || []);
   G.consecutiveWrong = data.consecutiveWrong || 0;
-  G.fields   = data.fields   || { '労基':{ c:0,t:0 }, '安衛':{ c:0,t:0 }, '労災':{ c:0,t:0 }, '雇保':{ c:0,t:0 }, '健保':{ c:0,t:0 }, '厚年':{ c:0,t:0 }, '国年':{ c:0,t:0 }, '社一':{ c:0,t:0 } };
-  G.cond     = data.cond     || { scrollRead:0, reformQ:0, reformOK:0, socialQ:0, socialOK:0, mockPassed:false };
+  // 10科目すべてを保証（旧セーブデータからのマイグレーション対応）
+  const DEFAULT_FIELDS = {
+    '労基':{ c:0,t:0 }, '安衛':{ c:0,t:0 }, '労災':{ c:0,t:0 },
+    '雇保':{ c:0,t:0 }, '徴収':{ c:0,t:0 }, '労一':{ c:0,t:0 },
+    '健保':{ c:0,t:0 }, '国年':{ c:0,t:0 }, '厚年':{ c:0,t:0 },
+    '社一':{ c:0,t:0 }
+  };
+  if (data.fields) {
+    // 旧データを引き継ぎつつ、不足科目はデフォルト値で補充
+    G.fields = Object.assign({}, DEFAULT_FIELDS);
+    Object.entries(data.fields).forEach(([k, v]) => { if (G.fields[k] !== undefined) G.fields[k] = v; });
+  } else {
+    G.fields = DEFAULT_FIELDS;
+  }
+  G.cond         = data.cond     || { scrollRead:0, reformQ:0, reformOK:0, socialQ:0, socialOK:0, mockPassed:false };
+  /* New v2 fields */
+  G.sp           = data.sp           || 0;
+  G.questCount   = data.questCount   || 0;
+  G.achievements = new Set(data.achievements || []);
+  G.selectedField = data.selectedField || null;
+  G.storyChapter = data.storyChapter || 0;
+  G.storyScene   = data.storyScene   || 0;
+  G.dailyStreak  = data.dailyStreak  || 0;
+  setTimeout(() => updateSkillUI(), 50);
 }
 
 /* ── localStorage helpers ── */
@@ -3526,10 +4450,658 @@ function refreshTitleButtons() {
 }
 
 /* ================================================
+   ③ TIMER SYSTEM
+   ================================================ */
+function startTimer(secs) {
+  stopTimer();
+  G.timerMax = secs || 45;
+  G.timerSec = G.timerMax;
+  const wrap = document.getElementById('timer-wrap');
+  if (wrap) wrap.style.display = 'block';
+  _updateTimerUI();
+  G._timerInterval = setInterval(() => {
+    G.timerSec--;
+    _updateTimerUI();
+    if (G.timerSec <= 0) {
+      stopTimer();
+      if (!G.answered) {
+        // Time up → force wrong answer
+        setMsg('⏱ 時間切れ！\n正しい答えを確認しよう。');
+        answer(-1); // -1 = time out
+      }
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  if (G._timerInterval) { clearInterval(G._timerInterval); G._timerInterval = null; }
+  const wrap = document.getElementById('timer-wrap');
+  if (wrap) wrap.style.display = 'none';
+}
+
+function _updateTimerUI() {
+  const pct = Math.max(0, G.timerSec / G.timerMax * 100);
+  const fill = document.getElementById('timer-fill');
+  const sec  = document.getElementById('timer-sec');
+  if (fill) fill.style.width = pct + '%';
+  if (sec)  sec.textContent = Math.max(0, G.timerSec);
+}
+
+function timerBonus() {
+  // Bonus EXP based on remaining time
+  if (G.timerSec >= G.timerMax * 0.7) return 5;
+  if (G.timerSec >= G.timerMax * 0.4) return 2;
+  return 0;
+}
+
+/* ================================================
+   ② SKILL SYSTEM
+   ================================================ */
+function gainSP(n) {
+  G.sp = Math.min(G.maxSp, G.sp + n);
+  updateSkillUI();
+}
+
+function updateSkillUI() {
+  const panel = document.getElementById('skill-panel');
+  if (!panel) return;
+  panel.style.display = 'block';
+  document.getElementById('sp-val').textContent  = `${G.sp} / ${G.maxSp}`;
+  document.getElementById('sp-fill').style.width = `${G.sp / G.maxSp * 100}%`;
+
+  const skEl  = document.getElementById('sk-eliminate');
+  const skTE  = document.getElementById('sk-timeext');
+  const skExp = document.getElementById('sk-exp2x');
+
+  if (skEl)  { skEl.disabled  = G.sp < 3 || G.answered || G.skillEliminateUsed; }
+  if (skTE)  { skTE.disabled  = G.sp < 2 || G.answered; }
+  if (skExp) { skExp.disabled = G.sp < 4 || G.skillExp2xActive; }
+
+  if (skEl)  skEl.className  = 'skill-btn' + (G.skillEliminateUsed ? ' active' : '');
+  if (skExp) skExp.className = 'skill-btn' + (G.skillExp2xActive   ? ' active' : '');
+}
+
+function useSkill(type) {
+  if (G.answered) return;
+  if (type === 'eliminate') {
+    if (G.sp < 3 || G.skillEliminateUsed) return;
+    G.sp -= 3;
+    G.skillEliminateUsed = true;
+    // Eliminate one random wrong choice
+    const q   = G.currentQ;
+    const btns = document.querySelectorAll('.choice-btn');
+    const wrongIdxs = [];
+    btns.forEach((b, i) => { if (i !== q.ans && b.style.display !== 'none') wrongIdxs.push(i); });
+    if (wrongIdxs.length) {
+      const target = wrongIdxs[Math.floor(Math.random() * wrongIdxs.length)];
+      btns[target].style.display = 'none';
+    }
+    setMsg('🗑️ 消去法発動！間違いの選択肢を1つ消した！', true);
+  } else if (type === 'timeext') {
+    if (G.sp < 2) return;
+    G.sp -= 2;
+    G.timerSec = Math.min(G.timerMax, G.timerSec + 20);
+    setMsg('⏳ 時間延長！20秒追加！', true);
+  } else if (type === 'exp2x') {
+    if (G.sp < 4 || G.skillExp2xActive) return;
+    G.sp -= 4;
+    G.skillExp2xActive = true;
+    setMsg('⭐ EXP×2 発動！次の正解のEXPが2倍になる！', true);
+  }
+  updateSkillUI();
+}
+
+/* ================================================
+   ① BOSS BATTLE SYSTEM
+   ================================================ */
+const BOSS_DATA = [
+  { sprite:'👹', name:'ろうきほうの大魔王',    field:'労基', lv:3 },
+  { sprite:'🔥', name:'安衛法の炎の支配者',    field:'安衛', lv:3 },
+  { sprite:'⚡', name:'労災保険の雷神',        field:'労災', lv:3 },
+  { sprite:'🌊', name:'雇保の大海嘯',          field:'雇保', lv:3 },
+  { sprite:'💀', name:'健保の闇の帝王',        field:'健保', lv:3 },
+  { sprite:'🐉', name:'年金山脈の龍帝',        field:'厚年', lv:3 },
+  { sprite:'🌑', name:'国年の暗黒魔道士',      field:'国年', lv:3 },
+  { sprite:'👑', name:'社一横断の魔王',        field:'社一', lv:3 },
+];
+
+function checkBossTrigger() {
+  G.questCount++;
+  // Update quest counter
+  const qc = document.getElementById('quest-counter');
+  if (qc) {
+    const remaining = 10 - (G.questCount % 10);
+    qc.textContent = `${G.questCount % 10}/10`;
+    qc.className   = 'quest-counter' + (remaining <= 2 ? ' boss-near' : '');
+  }
+  if (G.questCount % 10 === 0 && !G.bossMode) {
+    showBossAnnounce();
+    return true;
+  }
+  return false;
+}
+
+function showBossAnnounce() {
+  const boss = BOSS_DATA[Math.floor(Math.random() * BOSS_DATA.length)];
+  G.bossHp    = 3;
+  G.bossMaxHp = 3;
+  G.bossCorrect = 0;
+  document.getElementById('boss-sprite').textContent = boss.sprite;
+  document.getElementById('boss-name').textContent   = boss.name;
+  document.getElementById('boss-hp-fill').style.width = '100%';
+  document.getElementById('boss-hp-label-val').textContent = `${G.bossHp}/${G.bossMaxHp}`;
+  document.getElementById('overlay-boss').style.display = 'flex';
+}
+
+function startBossMode() {
+  G.bossMode = true;
+  document.getElementById('overlay-boss').style.display = 'none';
+  // Show boss indicator
+  const ind = document.getElementById('boss-indicator');
+  if (ind) ind.style.display = 'flex';
+  updateBossIndicator();
+  setMsg('👹 ボスバトル開始！\n3問連続正解でボスを倒せ！');
+  loadQuestion();
+}
+
+function updateBossIndicator() {
+  const fill  = document.getElementById('boss-ind-fill');
+  const label = document.getElementById('boss-ind-label');
+  if (!fill) return;
+  const pct  = G.bossHp / G.bossMaxHp * 100;
+  fill.style.width  = pct + '%';
+  if (label) label.textContent = `ボスHP: ${G.bossHp}/${G.bossMaxHp} ｜ あと${G.bossHp}問正解！`;
+}
+
+function handleBossAnswer(ok) {
+  if (!G.bossMode) return;
+  if (ok) {
+    G.bossCorrect++;
+    G.bossHp = Math.max(0, G.bossHp - 1);
+    updateBossIndicator();
+    document.getElementById('boss-hp-fill').style.width = (G.bossHp/G.bossMaxHp*100) + '%';
+    document.getElementById('boss-hp-label-val').textContent = `${G.bossHp}/${G.bossMaxHp}`;
+    if (G.bossHp <= 0) {
+      // Boss defeated!
+      G.bossMode = false;
+      const ind = document.getElementById('boss-indicator');
+      if (ind) ind.style.display = 'none';
+      setTimeout(() => {
+        addExp(100);
+        setMsg('🎉 ボスを撃破！\n特大ボーナス EXP+100 獲得！');
+        document.getElementById('overlay-levelup').style.display = 'none';
+        checkAchievements();
+      }, 400);
+    }
+  } else {
+    // Wrong: boss recovers 1 HP (max 3)
+    G.bossHp    = Math.min(G.bossMaxHp, G.bossHp + 1);
+    G.bossCorrect = 0;
+    updateBossIndicator();
+    document.getElementById('boss-hp-fill').style.width = (G.bossHp/G.bossMaxHp*100) + '%';
+    document.getElementById('boss-hp-label-val').textContent = `${G.bossHp}/${G.bossMaxHp}`;
+  }
+}
+
+/* ================================================
+   ④ ACHIEVEMENT SYSTEM
+   ================================================ */
+const ACHIEVEMENTS = [
+  { id:'first_correct',    icon:'⭐', name:'はじめての正解！',    cond:'初めて正解',           check:() => G.correct >= 1 },
+  { id:'streak5',          icon:'🔥', name:'コンボ5',            cond:'5連続正解を達成',       check:() => G.bestStreak >= 5 },
+  { id:'streak10',         icon:'💥', name:'コンボ10',           cond:'10連続正解を達成',      check:() => G.bestStreak >= 10 },
+  { id:'streak20',         icon:'🌟', name:'コンボ20！',         cond:'20連続正解を達成',      check:() => G.bestStreak >= 20 },
+  { id:'q100',             icon:'💯', name:'100問突破',          cond:'正解100問達成',         check:() => G.correct >= 100 },
+  { id:'q50',              icon:'🎯', name:'50問突破',           cond:'正解50問達成',          check:() => G.correct >= 50 },
+  { id:'lv10',             icon:'⬆️', name:'Lv.10到達',         cond:'レベル10に到達',        check:() => G.level >= 10 },
+  { id:'lv20',             icon:'🚀', name:'Lv.20到達',         cond:'レベル20に到達',        check:() => G.level >= 20 },
+  { id:'lv30',             icon:'👑', name:'Lv.30到達',         cond:'レベル30に到達',        check:() => G.level >= 30 },
+  { id:'rouki_master',     icon:'📜', name:'労基マスター',        cond:'労基を20問正解',        check:() => (G.fields['労基']||{c:0}).c >= 20 },
+  { id:'anei_master',      icon:'⚙️', name:'安衛マスター',        cond:'安衛を20問正解',        check:() => (G.fields['安衛']||{c:0}).c >= 20 },
+  { id:'boss_first',       icon:'👹', name:'初ボス撃破',          cond:'ボスを初めて倒した',    check:() => G.questCount >= 10 && !G.bossMode },
+  { id:'daily3',           icon:'📅', name:'デイリー達成',        cond:'デイリークエストを完了',check:() => G.dailyDone.every(Boolean) },
+  { id:'all_field',        icon:'🗺️', name:'全科目制覇',         cond:'全科目で1問以上正解',   check:() => ['労基','安衛','労災','雇保','健保','厚年','国年','社一'].every(f => (G.fields[f]||{c:0}).c >= 1) },
+  { id:'exp2x_use',        icon:'✨', name:'魔法使い',            cond:'EXP×2スキルを初使用',  check:() => G.skillExp2xActive },
+];
+
+function checkAchievements() {
+  ACHIEVEMENTS.forEach(a => {
+    if (!G.achievements.has(a.id) && a.check()) {
+      G.achievements.add(a.id);
+      showAchievementPopup(a);
+    }
+  });
+}
+
+let _achTimer = null;
+function showAchievementPopup(a) {
+  const el = document.getElementById('overlay-achievement');
+  if (!el) return;
+  document.getElementById('ach-popup-text').textContent = `${a.icon} ${a.name}`;
+  el.style.display = 'block';
+  if (_achTimer) clearTimeout(_achTimer);
+  _achTimer = setTimeout(() => { el.style.display = 'none'; }, 2800);
+}
+
+function showAchievements() {
+  show('screen-achievement');
+  renderAchievements();
+}
+
+function renderAchievements() {
+  const grid = document.getElementById('ach-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  ACHIEVEMENTS.forEach(a => {
+    const earned = G.achievements.has(a.id);
+    const div = document.createElement('div');
+    div.className = 'ach-badge' + (earned ? ' earned' : '');
+    div.innerHTML = `<span class="ach-icon">${a.icon}</span>
+                     <div class="ach-name">${a.name}</div>
+                     <div class="ach-cond">${a.cond}</div>`;
+    grid.appendChild(div);
+  });
+}
+
+/* ================================================
+   ⑤ WORLD MAP SYSTEM
+   ================================================ */
+const WM_AREAS = [
+  { key:'労基', icon:'🌲', name:'法令の森',   sub:'労働基準法',     unlockAt: 0 },
+  { key:'安衛', icon:'⚙️', name:'安全の砦',   sub:'労働安全衛生法', unlockAt: 5 },
+  { key:'労災', icon:'🔥', name:'労災の谷',   sub:'労災保険法',     unlockAt:10 },
+  { key:'雇保', icon:'🏠', name:'雇用の街',   sub:'雇用保険法',     unlockAt:15 },
+  { key:'健保', icon:'💊', name:'健保の泉',   sub:'健康保険法',     unlockAt:20 },
+  { key:'厚年', icon:'⛰️', name:'年金の山',   sub:'厚生年金保険法', unlockAt:25 },
+  { key:'国年', icon:'🌍', name:'国年の大地', sub:'国民年金法',     unlockAt:30 },
+  { key:'社一', icon:'🏰', name:'改正の城',   sub:'社会保険一般',   unlockAt:35 },
+];
+
+function showWorldMap() {
+  show('screen-worldmap');
+  renderWorldMap();
+}
+
+function renderWorldMap() {
+  const grid = document.getElementById('wm-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  WM_AREAS.forEach(area => {
+    const fieldData = G.fields[area.key] || { c:0, t:0 };
+    const unlocked  = G.correct >= area.unlockAt;
+    const isCurrent = G.selectedField === area.key;
+    const pct       = fieldData.t > 0 ? Math.round(fieldData.c / fieldData.t * 100) : 0;
+
+    const div = document.createElement('div');
+    div.className = 'wm-area' + (!unlocked ? ' locked' : ' unlocked') + (isCurrent ? ' current' : '');
+    div.innerHTML = `
+      ${isCurrent ? '<span class="wm-current-badge">▶ 現在</span>' : ''}
+      ${!unlocked ? '<span class="wm-lock-icon">🔒</span>' : ''}
+      <span class="wm-area-icon">${area.icon}</span>
+      <div class="wm-area-name">${area.name}</div>
+      <div class="wm-area-sub">${area.sub}</div>
+      <div class="wm-area-sub">正解 ${fieldData.c}問 (${pct}%)</div>
+      <div class="wm-progress-bar"><div class="wm-progress-fill" style="width:${pct}%"></div></div>
+      ${!unlocked ? `<div class="wm-unlock-cond">🔒 正解${area.unlockAt}問で解放</div>` : ''}
+    `;
+    if (unlocked) {
+      div.onclick = () => selectField(area.key);
+    }
+    grid.appendChild(div);
+  });
+}
+
+function selectField(key) {
+  G.selectedField = (G.selectedField === key) ? null : key;
+  // Rebuild question queue filtered to this field
+  if (G.selectedField) {
+    const pool = QS.filter(q => q.f === key);
+    queue = shuffle(pool);
+    qIdx  = 0;
+    G.currentQ = null;
+    setMsg(`🗺 エリア「${WM_AREAS.find(a=>a.key===key)?.name||key}」に集中！`);
+  } else {
+    queue = buildQueue();
+    qIdx  = 0;
+    G.currentQ = null;
+    setMsg('🌍 全エリアをランダムに挑戦！');
+  }
+  showBattle();
+}
+
+/* ================================================
+   ⑥ DAILY QUEST SYSTEM
+   ================================================ */
+const DQ_TEMPLATES = [
+  (f) => ({ icon:'⚔️',  text:`${f}から3問正解する`,   check:(q,ok) => q.f===f && ok, target:3 }),
+  ()    => ({ icon:'🔥',  text:'5連続正解を達成する',   check:(q,ok) => ok && G.streak>=5, target:1 }),
+  ()    => ({ icon:'📚',  text:'合計5問正解する',       check:(q,ok) => ok, target:5 }),
+  (f) => ({ icon:'🎯',  text:`${f}の問題に正解する`,   check:(q,ok) => q.f===f && ok, target:2 }),
+  ()    => ({ icon:'⏱️',  text:'タイム残り半分以上で正解',check:(q,ok) => ok && G.timerSec >= G.timerMax*0.5, target:3 }),
+];
+
+function getTodayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+}
+
+function initDailyQuest() {
+  const today = getTodayStr();
+  const saved = localStorage.getItem('sq_daily_v1');
+  let data = saved ? JSON.parse(saved) : null;
+
+  if (!data || data.date !== today) {
+    // Generate new quests for today using seeded random
+    const seed = today.split('-').reduce((a,b) => a*31+parseInt(b), 0);
+    const rng  = (s) => ((Math.sin(s) * 10000) % 1 + 1) % 1;
+    const fields = ['労基','安衛','労災','雇保','健保'];
+    const f1 = fields[Math.floor(rng(seed)   * fields.length)];
+    const f2 = fields[Math.floor(rng(seed+1) * fields.length)];
+    const tmpl = DQ_TEMPLATES;
+    const q0 = tmpl[0](f1);
+    const q1 = tmpl[2]();
+    const q2 = tmpl[3](f2);
+
+    // Check if yesterday was done for streak
+    const yDay = new Date(); yDay.setDate(yDay.getDate()-1);
+    const yStr = `${yDay.getFullYear()}-${yDay.getMonth()+1}-${yDay.getDate()}`;
+    const yData = localStorage.getItem('sq_daily_v1');
+    let streak = 1;
+    if (yData) {
+      const yParsed = JSON.parse(yData);
+      if (yParsed.date === yStr && yParsed.allDone) streak = (yParsed.streak||0) + 1;
+    }
+
+    data = {
+      date: today,
+      streak,
+      quests: [
+        { ...q0,  progress:0, done:false },
+        { ...q1,  progress:0, done:false },
+        { ...q2,  progress:0, done:false },
+      ],
+      allDone: false,
+      bonusGiven: false,
+    };
+    localStorage.setItem('sq_daily_v1', JSON.stringify(data));
+  }
+
+  G.dailyDate    = data.date;
+  G.dailyDone    = data.quests.map(q => q.done);
+  G.dailyBonusGiven = data.bonusGiven;
+  G.dailyStreak  = data.streak;
+  G._dailyData   = data;
+  renderDailyQuest();
+}
+
+function renderDailyQuest() {
+  const panel = document.getElementById('daily-panel');
+  if (!panel) return;
+  panel.style.display = 'block';
+
+  const data   = G._dailyData;
+  if (!data) return;
+
+  const badge = document.getElementById('dq-streak-badge');
+  if (badge) badge.textContent = `🔥 ${data.streak}日連続`;
+
+  const mc = document.getElementById('dq-missions');
+  if (!mc) return;
+  mc.innerHTML = '';
+  data.quests.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'dq-mission' + (q.done ? ' done' : '');
+    div.innerHTML = `<span class="dq-mission-icon">${q.done ? '✅' : q.icon}</span>
+                     <span>${q.text}（${q.progress}/${q.target}）</span>`;
+    mc.appendChild(div);
+  });
+
+  const allDone = document.getElementById('dq-all-done');
+  if (allDone) allDone.style.display = data.allDone ? 'block' : 'none';
+}
+
+function checkDailyProgress(q, ok) {
+  const data = G._dailyData;
+  if (!data || data.allDone) return;
+
+  let changed = false;
+  data.quests.forEach(dq => {
+    if (dq.done) return;
+    // Re-create check function from text pattern
+    let passes = false;
+    if (dq.text.includes('問正解する') && !dq.text.includes('合計') && !dq.text.includes('連続')) {
+      const field = dq.text.split('から')[0];
+      passes = ok && q.f === field;
+    } else if (dq.text.includes('合計')) {
+      passes = ok;
+    } else if (dq.text.includes('連続')) {
+      passes = ok && G.streak >= 5;
+    } else if (dq.text.includes('の問題に正解')) {
+      const field = dq.text.split('の問題')[0];
+      passes = ok && q.f === field;
+    } else if (dq.text.includes('タイム')) {
+      passes = ok && G.timerSec >= G.timerMax * 0.5;
+    }
+    if (passes) {
+      dq.progress++;
+      changed = true;
+      if (dq.progress >= dq.target) dq.done = true;
+    }
+  });
+
+  if (changed) {
+    data.allDone = data.quests.every(dq => dq.done);
+    G.dailyDone  = data.quests.map(dq => dq.done);
+    if (data.allDone && !data.bonusGiven) {
+      data.bonusGiven = true;
+      G.dailyBonusGiven = true;
+      setTimeout(() => {
+        addExp(100);
+        setMsg('🎉 デイリークエスト全完了！\nボーナス EXP +100 獲得！');
+        checkAchievements();
+      }, 500);
+    }
+    localStorage.setItem('sq_daily_v1', JSON.stringify(data));
+    renderDailyQuest();
+  }
+}
+
+/* ================================================
+   ⑦ VIRTUAL RANKING SYSTEM
+   ================================================ */
+function computePlayerScore() {
+  const accuracy = G.total > 0 ? G.correct / G.total : 0;
+  return Math.floor(G.correct * 10 + G.level * 50 + accuracy * 500 + G.bestStreak * 20);
+}
+
+function generateFakeRanking(playerScore) {
+  // Generate 1000 virtual players seeded by score range
+  const players = [];
+  const seed = playerScore + 1;
+  const rng = (n) => Math.abs(Math.sin(seed * n * 9301 + 49297) * 233280) % 1;
+
+  const names = ['たくや','あおい','けいた','はるか','ゆうと','まりん','ひろし','さくら','とも','りか',
+                 'けんじ','みき','だいき','あいこ','しんや','なな','こうじ','めぐ','りゅう','あい',
+                 'やすし','このみ','たかし','えみ','まさき','ゆか','じゅん','さやか','のぶ','まみ'];
+  for (let i = 0; i < 50; i++) {
+    const name = names[i % names.length] + (i < names.length ? '' : Math.floor(i/names.length+1));
+    // Distribute scores around player's level
+    const spread = 3000;
+    const base   = Math.max(100, playerScore + spread - (rng(i+1) * spread * 2.5));
+    players.push({ name, score: Math.floor(base), isYou: false });
+  }
+  players.push({ name: 'あなた', score: playerScore, isYou: true });
+  players.sort((a, b) => b.score - a.score);
+  return players;
+}
+
+function showRanking() {
+  show('screen-ranking');
+  renderRanking();
+}
+
+function renderRanking() {
+  const playerScore = computePlayerScore();
+  const list        = generateFakeRanking(playerScore);
+  const yourRank    = list.findIndex(p => p.isYou) + 1;
+  const totalVirtual = 1000;
+  const pct         = Math.round(yourRank / totalVirtual * 100);
+  const topPct      = 100 - pct;
+
+  const card = document.getElementById('rk-your-card');
+  if (card) card.innerHTML = `
+    <div class="rk-your-rank"><span>第</span>${yourRank}<span>位</span></div>
+    <div class="rk-your-pct">全国上位 ${topPct}%！</div>
+    <div class="rk-your-stats">スコア: ${playerScore} ｜ 正解: ${G.correct}問 ｜ Lv.${G.level}</div>
+  `;
+
+  const rkList = document.getElementById('rk-list');
+  if (!rkList) return;
+  rkList.innerHTML = '';
+  const top10 = list.slice(0, 10);
+  // Make sure player appears
+  const playerInTop = top10.some(p => p.isYou);
+  if (!playerInTop) top10[9] = list.find(p => p.isYou);
+
+  top10.forEach((p, i) => {
+    const rank = list.indexOf(p) + 1;
+    const div  = document.createElement('div');
+    div.className = 'rk-entry' + (p.isYou ? ' you' : '');
+    div.innerHTML = `<span class="rk-num ${rank<=3?'top3':''}">${rank<=3?['🥇','🥈','🥉'][rank-1]:rank}</span>
+                     <span class="rk-player">${p.isYou ? '👉 あなた' : p.name}</span>
+                     <span class="rk-score">${p.score}pt</span>`;
+    rkList.appendChild(div);
+  });
+}
+
+/* ================================================
+   ⑧ STORY MODE SYSTEM
+   ================================================ */
+const STORY_CHAPTERS = [
+  {
+    title: '第1章：旅立ちの朝',
+    scenes: [
+      { npc:'🧓', name:'長老', text:'おお、待ちかねたぞ、若者よ。\nこの地では「社労士の知識」こそが魔物を退ける唯一の武器だ。\n法令の森にはろうき法の魔物が潜んでいる…\nまずは基礎から始めるがよい。' },
+      { npc:'📜', name:'賢者', text:'若き冒険者よ。\n労働基準法の第一歩は「法定労働時間」だ。\n1日8時間・1週40時間——この数字を体に叩き込め！\n「ハッパ（8・40）で働く！」と声に出して覚えよ。',
+        mission: '労基法の問題を3問正解しよう', field:'労基', target:3 },
+      { npc:'🧙‍♂️', name:'冒険者ギルドの長', text:'ふむ、なかなかやるではないか。\n三六協定の「月45時間・年360時間」の原則…\nよく覚えておけ。試験では必ずといっていいほど出題される！' },
+    ]
+  },
+  {
+    title: '第2章：安全の砦へ',
+    scenes: [
+      { npc:'🏗️', name:'砦の守衛', text:'お前が噂の冒険者か。\nこの砦では労働安全衛生法が支配する。\n産業医・安全委員会・衛生委員会…\n50人という数字が鍵となる！', },
+      { npc:'⚙️', name:'安全の守護者', text:'常時50人以上の事業場では\n産業医・衛生管理者・衛生委員会の設置が義務じゃ。\n「ゴ（5）十人で安全体制！」この呪文を唱えよ！',
+        mission: '安衛法の問題を3問正解しよう', field:'安衛', target:3 },
+      { npc:'🧓', name:'長老', text:'よくぞここまで来た。\nボスを退けた力は本物だ。\n次は労災の谷が待っている。\n「業務遂行性」と「業務起因性」の2つを忘れるな！' },
+    ]
+  },
+  {
+    title: '第3章：年金の山の頂へ',
+    scenes: [
+      { npc:'⛰️', name:'山の賢老', text:'年金の山は険しい…\n厚生年金の標準報酬月額は32等級。\n健康保険の50等級と混同するな！\n「健保はゴジュウ（50）、厚年はサンジュウニ（32）」', },
+      { npc:'💊', name:'健保の守護神', text:'健康保険の傷病手当金は\n標準報酬日額の2/3、通算1年6ヶ月。\n2022年の改正で「通算」になったことを忘れずに！',
+        mission: '健保か厚年の問題を3問正解しよう', field:'健保', target:3 },
+      { npc:'👑', name:'社労士試験の守護神', text:'お前はついに頂上に立った！\nすべての科目を制覇する日は近い。\n諦めずに続けた者だけが、真の社労士となれる。\n最後まで戦い続けよ、勇者よ！' },
+    ]
+  },
+];
+
+let _storyChapter = 0;
+let _storyScene   = 0;
+let _storyMissionProgress = 0;
+let _storyMissionTarget   = 0;
+let _storyMissionField    = null;
+
+function showStoryMode() {
+  _storyChapter = G.storyChapter || 0;
+  _storyScene   = G.storyScene   || 0;
+  renderStoryScene();
+  show('screen-story');
+}
+
+function renderStoryScene() {
+  const ch    = STORY_CHAPTERS[_storyChapter];
+  const scene = ch && ch.scenes[_storyScene];
+  if (!ch || !scene) { closeStoryMode(); return; }
+
+  document.getElementById('story-chapter-label').textContent = ch.title;
+  document.getElementById('story-progress-label').textContent = `${_storyScene+1}/${ch.scenes.length}`;
+  document.getElementById('story-npc').textContent   = scene.npc;
+  document.getElementById('story-npc-name').textContent = scene.name;
+  document.getElementById('story-content').textContent  = scene.text;
+
+  const mbox = document.getElementById('story-mission-box');
+  const mtxt = document.getElementById('story-mission-text');
+  if (scene.mission) {
+    mbox.style.display = 'block';
+    _storyMissionTarget   = scene.target || 3;
+    _storyMissionProgress = 0;
+    _storyMissionField    = scene.field || null;
+    if (mtxt) mtxt.textContent = `${scene.mission}（0/${_storyMissionTarget}）`;
+    document.getElementById('story-next-btn').textContent = '⚔ ミッション開始！';
+    document.getElementById('story-next-btn').onclick = () => startStoryMission();
+  } else {
+    mbox.style.display = 'none';
+    _storyMissionField = null;
+    document.getElementById('story-next-btn').textContent = 'つぎへ ▶';
+    document.getElementById('story-next-btn').onclick = () => nextStory();
+  }
+}
+
+function startStoryMission() {
+  // Filter queue to story mission field
+  if (_storyMissionField) {
+    const pool = QS.filter(q => q.f === _storyMissionField);
+    queue = shuffle(pool);
+    qIdx  = 0;
+    G.currentQ = null;
+    G.storyActive = true;
+    setMsg(`📖 ストーリーミッション！\n「${_storyMissionField}」の問題を${_storyMissionTarget}問正解しよう！`);
+  }
+  showBattle();
+}
+
+function nextStory() {
+  _storyScene++;
+  if (_storyScene >= STORY_CHAPTERS[_storyChapter].scenes.length) {
+    _storyScene = 0;
+    _storyChapter++;
+    if (_storyChapter >= STORY_CHAPTERS.length) {
+      _storyChapter = STORY_CHAPTERS.length - 1;
+      closeStoryMode();
+      return;
+    }
+  }
+  G.storyChapter = _storyChapter;
+  G.storyScene   = _storyScene;
+  renderStoryScene();
+}
+
+function closeStoryMode() {
+  G.storyActive = false;
+  showBattle();
+}
+
+/* ================================================
    INIT
    ================================================ */
 updateUI();
 refreshTitleButtons();
+initDailyQuest();
+// Add Story Mode button to title screen
+(function() {
+  const container = document.querySelector('#screen-title > div[style*="flex-direction:column"]');
+  if (container && !document.getElementById('btn-story')) {
+    const btn = document.createElement('button');
+    btn.id = 'btn-story';
+    btn.className = 'act-btn';
+    btn.style.cssText = 'font-size:12px;padding:10px 36px;letter-spacing:2px;background:#110033;border-color:#8855ff;color:#aa88ff;';
+    btn.innerHTML = '📖 ストーリーモード';
+    btn.onclick = showStoryMode;
+    container.appendChild(btn);
+  }
+})();
 </script>
 </body>
 </html>
