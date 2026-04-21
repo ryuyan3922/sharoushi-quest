@@ -1505,6 +1505,349 @@ body {
   z-index: 6;
 }
 .quest-counter.boss-near { color: #ff6666; border-color: #882222; animation: blink-dq 0.7s steps(1) infinite; }
+
+/* =========================================
+   ① LOGIN STREAK BANNER
+   ========================================= */
+.streak-banner {
+  background: linear-gradient(90deg, #1a0800 0%, #2a1000 50%, #1a0800 100%);
+  border: 2px solid #cc8800;
+  color: #ffd700;
+  font-size: 14px;
+  padding: 8px 18px;
+  text-align: center;
+  letter-spacing: 2px;
+  z-index: 2;
+  width: 100%;
+  box-shadow: 0 0 12px rgba(255,180,0,0.3);
+  animation: streak-pulse 2s ease-in-out infinite alternate;
+}
+@keyframes streak-pulse {
+  from { box-shadow: 0 0 8px rgba(255,180,0,0.2); }
+  to   { box-shadow: 0 0 20px rgba(255,200,0,0.6); }
+}
+
+/* =========================================
+   ③ REVIEW BADGE
+   ========================================= */
+.review-badge {
+  background: #001a40;
+  border: 2px solid #ffd700;
+  color: #ffd700;
+  font-size: 12px;
+  padding: 6px 16px;
+  text-align: center;
+  letter-spacing: 1px;
+  z-index: 2;
+  width: 100%;
+  animation: blink-dq 1s steps(1) infinite;
+}
+
+/* =========================================
+   ⑤ PLAYER CHARACTER PANEL
+   ========================================= */
+.player-char {
+  position: absolute;
+  left: 18px;
+  top: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  z-index: 5;
+}
+.char-face {
+  font-size: 22px;
+  line-height: 1;
+  filter: drop-shadow(0 0 6px rgba(100,200,255,0.6));
+}
+.char-body {
+  font-size: 16px;
+  line-height: 1;
+}
+.char-mood-text {
+  font-size: 8px;
+  color: #ffd700;
+  text-shadow: 0 0 4px rgba(255,200,0,0.8);
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+/* =========================================
+   ④ SHARE CARD OVERLAY
+   ========================================= */
+#overlay-sharecard {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,20,0.92);
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sharecard-box {
+  background: #00004a;
+  border: 3px solid #6688ff;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-width: 440px;
+  width: 95%;
+}
+.sharecard-title {
+  color: #ffd700;
+  font-size: 15px;
+  letter-spacing: 3px;
+  text-shadow: 0 0 10px rgba(255,200,0,0.6);
+}
+.sharecard-text {
+  color: #aabbcc;
+  font-size: 10px;
+  text-align: center;
+  line-height: 1.8;
+}
+.sharecard-buttons {
+  display: flex;
+  gap: 10px;
+}
+.sharecard-buttons button {
+  background: #001040;
+  border: 2px solid #6688ff;
+  color: #aaccff;
+  font-family: inherit;
+  font-size: 12px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+.sharecard-buttons button:hover { background: #002080; }
+
+/* =========================================
+   ② WEEKLY RANKING TABS
+   ========================================= */
+.rk-tabs {
+  display: flex;
+  border-bottom: 2px solid #334488;
+  margin-bottom: 8px;
+}
+.rk-tab {
+  flex: 1;
+  background: #00002a;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: #6677aa;
+  font-family: inherit;
+  font-size: 11px;
+  padding: 8px 4px;
+  cursor: pointer;
+  letter-spacing: 1px;
+}
+.rk-tab.active {
+  color: #ffd700;
+  border-bottom-color: #ffd700;
+  background: #001040;
+}
+.rk-weekly-msg {
+  text-align: center;
+  color: #ff9900;
+  font-size: 12px;
+  padding: 6px;
+  margin-bottom: 6px;
+}
+
+/* =========================================
+   ⑥ MOCK EXAM SCREENS
+   ========================================= */
+#screen-exam, #screen-exam-result {
+  font-family: 'DotGothic16', 'ＭＳ ゴシック', monospace;
+}
+.exam-header {
+  background: #00003a;
+  border-bottom: 2px solid #334488;
+  padding: 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.exam-title {
+  color: #ffd700;
+  font-size: 13px;
+  letter-spacing: 2px;
+}
+.exam-timer {
+  color: #ff6666;
+  font-size: 13px;
+  font-weight: bold;
+}
+.exam-progress {
+  text-align: center;
+  color: #88aaff;
+  font-size: 11px;
+  padding: 6px;
+  border-bottom: 1px solid #223355;
+}
+.exam-question-box {
+  padding: 12px;
+  flex: 1;
+}
+.exam-question {
+  background: #000040;
+  border: 2px solid #4466bb;
+  padding: 12px 14px;
+  font-size: 12px;
+  line-height: 2.0;
+  color: #eeeeff;
+  white-space: pre-line;
+  margin-bottom: 8px;
+}
+.exam-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.exam-choice-btn {
+  background: #00003a;
+  border: 2px solid #334488;
+  color: #ddeeff;
+  padding: 8px 14px 8px 28px;
+  font-family: inherit;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s;
+  position: relative;
+  line-height: 1.7;
+}
+.exam-choice-btn::before { content:'▷'; position:absolute; left:10px; top:50%; transform:translateY(-50%); color:#334488; font-size:9px; }
+.exam-choice-btn:hover { background: #001a44; border-color: #6688cc; }
+.exam-choice-btn.selected { background: #002060; border-color: #88aaff; }
+.exam-status { color: #667788; font-size: 10px; text-align: center; padding: 4px; }
+.exam-result-title {
+  color: #ffd700;
+  font-size: 18px;
+  letter-spacing: 3px;
+  text-shadow: 0 0 10px rgba(255,200,0,0.5);
+  text-align: center;
+}
+.exam-result-score {
+  color: #ffffff;
+  font-size: 28px;
+  text-align: center;
+  letter-spacing: 4px;
+}
+.exam-result-detail {
+  background: #00003a;
+  border: 2px solid #334488;
+  padding: 12px;
+  width: 100%;
+  font-size: 11px;
+  color: #aabbcc;
+  line-height: 2.0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+.exam-result-judge {
+  background: #001a00;
+  border: 2px solid #44cc44;
+  padding: 10px 16px;
+  color: #88ff88;
+  font-size: 12px;
+  text-align: center;
+  width: 100%;
+  line-height: 1.8;
+}
+.exam-result-judge.fail {
+  background: #1a0000;
+  border-color: #cc4444;
+  color: #ff8888;
+}
+.exam-result-judge.near {
+  background: #1a1000;
+  border-color: #cc9900;
+  color: #ffcc44;
+}
+#screen-exam-result button {
+  background: #001040;
+  border: 2px solid #6688ff;
+  color: #aaccff;
+  font-family: inherit;
+  font-size: 12px;
+  padding: 10px 20px;
+  cursor: pointer;
+  letter-spacing: 2px;
+}
+#screen-exam-result button:hover { background: #002080; }
+
+/* Exam setup overlay */
+#overlay-exam-setup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,20,0.92);
+  z-index: 9000;
+  align-items: center;
+  justify-content: center;
+}
+.exam-setup-box {
+  background: #00004a;
+  border: 3px solid #6688ff;
+  padding: 20px;
+  width: 95%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.exam-setup-title {
+  color: #ffd700;
+  font-size: 14px;
+  letter-spacing: 3px;
+  text-align: center;
+  border-bottom: 1px solid #334488;
+  padding-bottom: 8px;
+}
+.exam-setup-label {
+  color: #88aaff;
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+.exam-setup-select, .exam-setup-radios {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.exam-setup-opt {
+  background: #001040;
+  border: 2px solid #334488;
+  color: #aabbcc;
+  font-family: inherit;
+  font-size: 11px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.exam-setup-opt.selected { background: #002080; border-color: #6688ff; color: #fff; }
+.exam-start-btn {
+  background: #002060;
+  border: 2px solid #6688ff;
+  color: #ffd700;
+  font-family: inherit;
+  font-size: 13px;
+  padding: 12px;
+  cursor: pointer;
+  letter-spacing: 3px;
+  text-align: center;
+}
+.exam-start-btn:hover { background: #003080; }
+.exam-cancel-btn {
+  background: transparent;
+  border: 1px solid #334455;
+  color: #667788;
+  font-family: inherit;
+  font-size: 11px;
+  padding: 6px;
+  cursor: pointer;
+  text-align: center;
+}
 </style>
 </head>
 <body>
@@ -1519,6 +1862,12 @@ body {
 <div id="screen-title">
   <div class="title-stars"></div>
   <div class="pixel-deco"></div>
+
+  <!-- ① Login Streak Banner (shown if streak >= 2) -->
+  <div id="streak-banner" class="streak-banner" style="display:none;">🔥 <span id="streak-count">0</span>日連続ログイン中！</div>
+
+  <!-- ③ SRS Review Badge (shown if due reviews > 0) -->
+  <div id="review-badge" class="review-badge" style="display:none;">📚 今日の復習 <span id="review-count">0</span>問</div>
 
   <!-- Logo -->
   <div class="logo-main">社労士クエスト</div>
@@ -1571,6 +1920,9 @@ body {
   <div style="display:flex;flex-direction:column;gap:10px;width:100%;z-index:1;">
     <button id="btn-load-title" class="act-btn" onclick="continueStory()" style="display:none;font-size:13px;padding:11px 36px;letter-spacing:3px;background:#001a44;border-color:#6688cc;">
       📖 ぼうけんをよむ
+    </button>
+    <button id="btn-srs-review" class="act-btn" onclick="startReviewMode()" style="display:none;font-size:13px;padding:11px 36px;letter-spacing:3px;background:#001a2a;border-color:#ffd700;color:#ffd700;">
+      📚 今日の復習をする
     </button>
     <button class="act-btn primary" onclick="startNewStory()" style="font-size:14px;padding:12px 36px;letter-spacing:4px;">
       ⚡ NEW GAME　ぼうけんをはじめる
@@ -1676,6 +2028,13 @@ body {
     <div class="player-area">
       <span class="player-sprite" id="player-sprite">🧙‍♂️</span>
       <div class="player-label" id="player-label">見習い社労士</div>
+    </div>
+
+    <!-- ⑤ Character mood panel -->
+    <div id="player-char" class="player-char">
+      <div id="char-face" class="char-face">😊</div>
+      <div id="char-body" class="char-body">🧙‍♂️</div>
+      <div id="char-mood-text" class="char-mood-text">快調！</div>
     </div>
 
     <!-- Combo badge -->
@@ -1786,6 +2145,7 @@ body {
     <button class="nav-btn" onclick="showWorldMap()">🗺 マップ</button>
     <button class="nav-btn" onclick="showAchievements()">🏆 実績</button>
     <button class="nav-btn" onclick="showBattle()">🔄 自由訓練</button>
+    <button class="nav-btn" onclick="showExamSetup()">📋 模擬試験</button>
     <button class="nav-btn" onclick="showSaveScreen('save')">💾 セーブ</button>
   </div>
 </div>
@@ -1878,6 +2238,11 @@ body {
 <!-- ⑦ RANKING SCREEN -->
 <div id="screen-ranking">
   <div class="rk-title">👑 全国ランキング</div>
+  <div class="rk-tabs">
+    <button class="rk-tab active" id="rk-tab-weekly" onclick="switchRankTab('weekly')">📅 今週ランキング</button>
+    <button class="rk-tab" id="rk-tab-all" onclick="switchRankTab('all')">📊 全体ランキング</button>
+  </div>
+  <div id="rk-weekly-msg" class="rk-weekly-msg" style="display:none;"></div>
   <div class="rk-your-card" id="rk-your-card"></div>
   <div class="rk-list-title">📋 ランキングトップ10</div>
   <div id="rk-list"></div>
@@ -1911,6 +2276,79 @@ body {
 </div>
 
 </div><!-- #game -->
+
+<!-- ⑥ MOCK EXAM SCREEN (outside #game so show() can hide it) -->
+<div id="screen-exam" style="display:none;position:fixed;inset:0;z-index:800;overflow-y:auto;">
+  <div style="max-width:480px;margin:0 auto;min-height:100vh;background:#000010;border:4px solid #6688ff;display:flex;flex-direction:column;">
+    <div class="exam-header">
+      <span class="exam-title">📋 模擬試験モード</span>
+      <span class="exam-timer" id="exam-timer">⏱ 20:00</span>
+    </div>
+    <div class="exam-progress" id="exam-progress">1 / 10</div>
+    <div class="exam-question-box">
+      <div class="exam-question" id="exam-question"></div>
+      <div class="exam-choices" id="exam-choices"></div>
+    </div>
+    <div class="exam-status" id="exam-status">選択肢を選んでください</div>
+  </div>
+</div>
+
+<!-- ⑥ EXAM RESULT SCREEN -->
+<div id="screen-exam-result" style="display:none;position:fixed;inset:0;z-index:800;overflow-y:auto;background:#000010;">
+  <div style="max-width:480px;margin:0 auto;padding:24px 16px;display:flex;flex-direction:column;align-items:center;gap:14px;">
+    <div class="exam-result-title">📊 試験結果</div>
+    <div class="exam-result-score" id="exam-result-score"></div>
+    <div class="exam-result-detail" id="exam-result-detail"></div>
+    <div class="exam-result-judge" id="exam-result-judge"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+      <button onclick="showStoryMode()">📖 ストーリーへ戻る</button>
+      <button onclick="showExamSetup()">🔄 もう一度</button>
+    </div>
+  </div>
+</div>
+
+<!-- ④ SHARE CARD OVERLAY -->
+<div id="overlay-sharecard" style="display:none;">
+  <div class="sharecard-box">
+    <div class="sharecard-title">⚔️ ボス討伐記念！</div>
+    <canvas id="sharecard-canvas" width="400" height="250"></canvas>
+    <div class="sharecard-text" id="sharecard-text"></div>
+    <div class="sharecard-buttons">
+      <button onclick="downloadShareCard()">💾 カードを保存</button>
+      <button onclick="document.getElementById('overlay-sharecard').style.display='none'">✕ 閉じる</button>
+    </div>
+  </div>
+</div>
+
+<!-- ⑥ EXAM SETUP OVERLAY -->
+<div id="overlay-exam-setup" style="display:none;position:fixed;inset:0;background:rgba(0,0,20,0.92);z-index:9000;display:none;align-items:center;justify-content:center;">
+  <div class="exam-setup-box">
+    <div class="exam-setup-title">📋 模擬試験 設定</div>
+    <div>
+      <div class="exam-setup-label">科目を選択</div>
+      <div class="exam-setup-select" id="exam-field-select">
+        <button class="exam-setup-opt selected" data-field="">全科目</button>
+        <button class="exam-setup-opt" data-field="労基">労基</button>
+        <button class="exam-setup-opt" data-field="安衛">安衛</button>
+        <button class="exam-setup-opt" data-field="労災">労災</button>
+        <button class="exam-setup-opt" data-field="雇保">雇保</button>
+        <button class="exam-setup-opt" data-field="健保">健保</button>
+        <button class="exam-setup-opt" data-field="厚年">厚年</button>
+        <button class="exam-setup-opt" data-field="国年">国年</button>
+        <button class="exam-setup-opt" data-field="社一">社一</button>
+      </div>
+    </div>
+    <div>
+      <div class="exam-setup-label">問題数</div>
+      <div class="exam-setup-radios" id="exam-count-select">
+        <button class="exam-setup-opt selected" data-count="10">10問（20分）</button>
+        <button class="exam-setup-opt" data-count="20">20問（40分）</button>
+      </div>
+    </div>
+    <button class="exam-start-btn" onclick="startExamFromSetup()">⚔ 試験開始！</button>
+    <button class="exam-cancel-btn" onclick="document.getElementById('overlay-exam-setup').style.display='none'">✕ キャンセル</button>
+  </div>
+</div>
 
 <!-- ① BOSS BATTLE OVERLAY -->
 <div id="overlay-boss">
@@ -1989,6 +2427,17 @@ const G = {
   storyChapter: 0,
   storyScene: 0,
   storyActive: false,
+  /* New features */
+  loginStreak: 0,
+  weeklyXP: 0,
+  charMood: 'normal',
+  reviewMode2: false,   /* SRS review mode flag */
+  examMode: false,
+  examIdx: 0,
+  examTimeLeft: 1200,
+  examQuestions: [],
+  examAnswers: [],
+  _examTimerInterval: null,
 };
 
 /* ================================================
@@ -3461,7 +3910,7 @@ function shuffle(a) {
 /* ================================================
    SCREEN MANAGEMENT
    ================================================ */
-const SCREENS = ['screen-title','screen-intro','screen-battle','screen-status','screen-save','screen-gameover','screen-worldmap','screen-achievement','screen-ranking','screen-story'];
+const SCREENS = ['screen-title','screen-intro','screen-battle','screen-status','screen-save','screen-gameover','screen-worldmap','screen-achievement','screen-ranking','screen-story','screen-exam','screen-exam-result'];
 function show(id) {
   SCREENS.forEach(s => document.getElementById(s).style.display = 'none');
   const el = document.getElementById(id);
@@ -3677,6 +4126,13 @@ function answer(sel) {
       setTimeout(() => cb.style.display='none', 2500);
     }
 
+    // ⑤ Character mood
+    updateCharMood(G.streak >= 10 ? 'king' : G.streak >= 3 ? 'fire' : 'happy');
+    // ② Weekly XP
+    addWeeklyXP((q.pt || 10) * (_exp2xActive ? 2 : 1));
+    // ③ SRS update
+    updateSrsCard(q.id, true);
+
     showResult(true, '⭐ せいかい！');
     // Auto-save on correct answer
     setTimeout(() => autoSave(), 600);
@@ -3726,6 +4182,11 @@ function answer(sel) {
 
     // ① Boss HP recover
     if (G.bossMode) handleBossAnswer(false);
+
+    // ⑤ Character mood
+    updateCharMood('sad');
+    // ③ SRS update
+    updateSrsCard(q.id, false);
 
     showResult(false, '💀 ちがいます…');
     // ⑥ Daily quest (wrong also tracked for total-count quests)
@@ -3827,6 +4288,7 @@ function updateUI() {
   document.getElementById('ex-val').textContent  = `${G.exp}/${en}`;
   document.getElementById('sb-correct').textContent = G.correct;
   document.getElementById('sb-streak').textContent  = G.streak;
+  updateCharDisplay();
 }
 
 /* ================================================
@@ -4055,7 +4517,6 @@ let   _saveReturnScreen = 'screen-battle';
 
 /* ── Serialize / Deserialize ── */
 /* ── NEW: extend serialize/apply for new state ── */
-const _origSerialize = typeof serializeState === 'function' ? serializeState : null;
 function serializeState() {
   return {
     version:  1,
@@ -4083,6 +4544,8 @@ function serializeState() {
     storyChapter: G.storyChapter,
     storyScene:   G.storyScene,
     dailyStreak:  G.dailyStreak,
+    loginStreak:  G.loginStreak,
+    weeklyXP:     G.weeklyXP,
   };
 }
 
@@ -4123,6 +4586,8 @@ function applyState(data) {
   G.storyChapter = data.storyChapter || 0;
   G.storyScene   = data.storyScene   || 0;
   G.dailyStreak  = data.dailyStreak  || 0;
+  G.loginStreak  = data.loginStreak  || 0;
+  G.weeklyXP     = data.weeklyXP     || 0;
   setTimeout(() => updateSkillUI(), 50);
 }
 
@@ -4619,11 +5084,13 @@ function handleBossAnswer(ok) {
       G.bossMode = false;
       const ind = document.getElementById('boss-indicator');
       if (ind) ind.style.display = 'none';
+      const _bossName = document.getElementById('boss-name') ? document.getElementById('boss-name').textContent : 'ボス';
       setTimeout(() => {
         addExp(100);
         setMsg('🎉 ボスを撃破！\n特大ボーナス EXP+100 獲得！');
         document.getElementById('overlay-levelup').style.display = 'none';
         checkAchievements();
+        setTimeout(() => showShareCard(_bossName), 1200);
       }, 400);
     }
   } else {
@@ -4655,6 +5122,10 @@ const ACHIEVEMENTS = [
   { id:'daily3',           icon:'📅', name:'デイリー達成',        cond:'デイリークエストを完了',check:() => G.dailyDone.every(Boolean) },
   { id:'all_field',        icon:'🗺️', name:'全科目制覇',         cond:'全科目で1問以上正解',   check:() => ['労基','安衛','労災','雇保','健保','厚年','国年','社一'].every(f => (G.fields[f]||{c:0}).c >= 1) },
   { id:'exp2x_use',        icon:'✨', name:'魔法使い',            cond:'EXP×2スキルを初使用',  check:() => G.skillExp2xActive },
+  { id:'login7',           icon:'🔥', name:'7日連続！',           cond:'7日連続ログイン',       check:() => G.loginStreak >= 7 },
+  { id:'login30',          icon:'🌟', name:'30日連続！',          cond:'30日連続ログイン',      check:() => G.loginStreak >= 30 },
+  { id:'login100',         icon:'👑', name:'100日連続！',         cond:'100日連続ログイン',     check:() => G.loginStreak >= 100 },
+  { id:'exam_pass',        icon:'🎓', name:'模擬試験合格！',       cond:'模擬試験で70%以上正解', check:() => G.cond.mockPassed },
 ];
 
 function checkAchievements() {
@@ -4928,12 +5399,82 @@ function generateFakeRanking(playerScore) {
   return players;
 }
 
+let _currentRankTab = 'weekly';
+
 function showRanking() {
   show('screen-ranking');
+  _currentRankTab = 'weekly';
+  renderRanking();
+}
+
+function switchRankTab(tab) {
+  _currentRankTab = tab;
+  document.getElementById('rk-tab-weekly').className = 'rk-tab' + (tab==='weekly' ? ' active' : '');
+  document.getElementById('rk-tab-all').className    = 'rk-tab' + (tab==='all'    ? ' active' : '');
   renderRanking();
 }
 
 function renderRanking() {
+  if (_currentRankTab === 'weekly') {
+    renderWeeklyRanking();
+  } else {
+    renderAllTimeRanking();
+  }
+}
+
+function renderWeeklyRanking() {
+  const weekStart = getWeekStartStr();
+  const playerXP  = G.weeklyXP;
+  // Generate 20 virtual weekly players seeded by weekStart + playerXP
+  const seed = weekStart.split('-').reduce((a,b) => a*31+parseInt(b), 0) + playerXP + 1;
+  const rng  = (n) => Math.abs(Math.sin(seed * n * 9301 + 49297) * 233280) % 1;
+  const names = ['たくや','あおい','けいた','はるか','ゆうと','まりん','ひろし','さくら','とも','りか',
+                 'けんじ','みき','だいき','あいこ','しんや','なな','こうじ','めぐ','りゅう','あい'];
+  const players = [];
+  for (let i = 0; i < 20; i++) {
+    const name  = names[i % names.length];
+    const base  = Math.max(10, playerXP + 500 - Math.floor(rng(i+1) * 1000));
+    players.push({ name, score: Math.max(0, base), isYou: false });
+  }
+  players.push({ name: 'あなた', score: playerXP, isYou: true });
+  players.sort((a, b) => b.score - a.score);
+
+  const yourRank = players.findIndex(p => p.isYou) + 1;
+  const wkMsg    = document.getElementById('rk-weekly-msg');
+  if (wkMsg) {
+    wkMsg.style.display = 'block';
+    wkMsg.textContent   = `今週は全国${yourRank}位！${yourRank <= 3 ? '🔥' : yourRank <= 10 ? '⭐' : '📚'}`;
+  }
+
+  const card = document.getElementById('rk-your-card');
+  if (card) card.innerHTML = `
+    <div class="rk-your-rank"><span>第</span>${yourRank}<span>位</span></div>
+    <div class="rk-your-pct">今週のXP: ${playerXP}</div>
+    <div class="rk-your-stats">週間XP: ${playerXP} ｜ 正解: ${G.correct}問 ｜ Lv.${G.level}</div>
+  `;
+
+  const rkList = document.getElementById('rk-list');
+  if (!rkList) return;
+  rkList.innerHTML = '';
+  const top10 = players.slice(0, 10);
+  const playerInTop = top10.some(p => p.isYou);
+  if (!playerInTop && players.length > 10) top10[9] = players.find(p => p.isYou) || top10[9];
+
+  top10.forEach(p => {
+    const rank = players.indexOf(p) + 1;
+    const div  = document.createElement('div');
+    div.className = 'rk-entry' + (p.isYou ? ' you' : '');
+    div.innerHTML = `<span class="rk-num ${rank<=3?'top3':''}">${rank<=3?['🥇','🥈','🥉'][rank-1]:rank}</span>
+                     <span class="rk-player">${p.isYou ? '👉 あなた' : p.name}</span>
+                     <span class="rk-score">${p.score}XP</span>`;
+    rkList.appendChild(div);
+  });
+}
+
+function renderAllTimeRanking() {
+  const wkMsg = document.getElementById('rk-weekly-msg');
+  if (wkMsg) wkMsg.style.display = 'none';
+
   const playerScore = computePlayerScore();
   const list        = generateFakeRanking(playerScore);
   const yourRank    = list.findIndex(p => p.isYou) + 1;
@@ -4952,11 +5493,10 @@ function renderRanking() {
   if (!rkList) return;
   rkList.innerHTML = '';
   const top10 = list.slice(0, 10);
-  // Make sure player appears
   const playerInTop = top10.some(p => p.isYou);
   if (!playerInTop) top10[9] = list.find(p => p.isYou);
 
-  top10.forEach((p, i) => {
+  top10.forEach((p) => {
     const rank = list.indexOf(p) + 1;
     const div  = document.createElement('div');
     div.className = 'rk-entry' + (p.isYou ? ' you' : '');
@@ -5254,11 +5794,433 @@ function closeStoryMode() {
 }
 
 /* ================================================
+   ① LOGIN STREAK
+   ================================================ */
+function initLoginStreak() {
+  const today = getTodayStr();
+  const raw   = localStorage.getItem('sq_login_v1');
+  let data    = raw ? JSON.parse(raw) : null;
+
+  if (!data) {
+    data = { date: today, streak: 1 };
+  } else if (data.date === today) {
+    // Already logged in today — keep streak
+  } else {
+    // Check if yesterday
+    const d = new Date();
+    d.setDate(d.getDate() - 1);
+    const yStr = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+    if (data.date === yStr) {
+      data = { date: today, streak: (data.streak || 0) + 1 };
+    } else {
+      data = { date: today, streak: 1 };
+    }
+  }
+
+  localStorage.setItem('sq_login_v1', JSON.stringify(data));
+  G.loginStreak = data.streak;
+
+  // Update title screen UI
+  const banner = document.getElementById('streak-banner');
+  const count  = document.getElementById('streak-count');
+  if (banner && count) {
+    count.textContent = data.streak;
+    banner.style.display = data.streak >= 2 ? 'block' : 'none';
+  }
+}
+
+/* ================================================
+   ② WEEKLY XP
+   ================================================ */
+function getWeekStartStr() {
+  const d   = new Date();
+  const day = d.getDay(); // 0=Sun,1=Mon,...
+  const diff = (day === 0 ? -6 : 1 - day); // offset to Monday
+  const mon = new Date(d);
+  mon.setDate(d.getDate() + diff);
+  return `${mon.getFullYear()}-${mon.getMonth()+1}-${mon.getDate()}`;
+}
+
+function initWeeklyXP() {
+  const weekStart = getWeekStartStr();
+  const raw       = localStorage.getItem('sq_weekly_v1');
+  let data        = raw ? JSON.parse(raw) : null;
+
+  if (data && data.weekStart === weekStart) {
+    G.weeklyXP = data.xp || 0;
+  } else {
+    G.weeklyXP = 0;
+    localStorage.setItem('sq_weekly_v1', JSON.stringify({ weekStart, xp: 0 }));
+  }
+}
+
+function addWeeklyXP(pts) {
+  G.weeklyXP += pts;
+  const weekStart = getWeekStartStr();
+  localStorage.setItem('sq_weekly_v1', JSON.stringify({ weekStart, xp: G.weeklyXP }));
+}
+
+/* ================================================
+   ③ SPACED REPETITION (SRS)
+   ================================================ */
+const SRS_INTERVALS = [1, 3, 7, 14, 30]; // days
+
+function getSrsData() {
+  try {
+    const raw = localStorage.getItem('sq_srs_v1');
+    return raw ? JSON.parse(raw) : {};
+  } catch(e) { return {}; }
+}
+
+function saveSrsData(data) {
+  try { localStorage.setItem('sq_srs_v1', JSON.stringify(data)); } catch(e) {}
+}
+
+function updateSrsCard(qId, correct) {
+  const data = getSrsData();
+  const card  = data[qId] || { repetitions: 0, interval: 1, nextReview: 0 };
+  if (correct) {
+    card.repetitions = (card.repetitions || 0) + 1;
+    const idx  = Math.min(card.repetitions - 1, SRS_INTERVALS.length - 1);
+    card.interval   = SRS_INTERVALS[idx];
+  } else {
+    card.repetitions = 0;
+    card.interval    = 1;
+  }
+  card.nextReview = Date.now() + card.interval * 86400000;
+  data[qId] = card;
+  saveSrsData(data);
+}
+
+function getDueReviews() {
+  const data = getSrsData();
+  const now  = Date.now();
+  return QS.filter(q => {
+    const card = data[q.id];
+    return card && card.nextReview <= now;
+  });
+}
+
+function updateReviewBadge() {
+  const due   = getDueReviews();
+  const badge = document.getElementById('review-badge');
+  const count = document.getElementById('review-count');
+  const btn   = document.getElementById('btn-srs-review');
+  if (badge && count) {
+    count.textContent      = due.length;
+    badge.style.display    = due.length > 0 ? 'block' : 'none';
+  }
+  if (btn) {
+    btn.style.display = due.length > 0 ? 'block' : 'none';
+  }
+}
+
+function startReviewMode() {
+  const due = getDueReviews();
+  if (!due.length) { showToast('今日の復習はありません！'); return; }
+  queue = shuffle(due);
+  qIdx  = 0;
+  G.reviewMode = true;
+  show('screen-battle');
+  loadQuestion();
+}
+
+/* ================================================
+   ④ SHARE CARD (Canvas)
+   ================================================ */
+function showShareCard(bossName) {
+  const ol = document.getElementById('overlay-sharecard');
+  if (!ol) return;
+
+  const canvas = document.getElementById('sharecard-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = 400, H = 250;
+
+  // Background
+  ctx.fillStyle = '#00004a';
+  ctx.fillRect(0, 0, W, H);
+
+  // Border
+  ctx.strokeStyle = '#6688ff';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(2, 2, W-4, H-4);
+  ctx.strokeStyle = 'rgba(100,150,255,0.3)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(8, 8, W-16, H-16);
+
+  // Title
+  ctx.font = 'bold 18px monospace';
+  ctx.fillStyle = '#ffd700';
+  ctx.textAlign = 'center';
+  ctx.fillText('社労士クエスト', W/2, 35);
+
+  // Subtitle
+  ctx.font = '12px monospace';
+  ctx.fillStyle = '#88aaff';
+  ctx.fillText('～ ボス討伐記念 ～', W/2, 55);
+
+  // Boss
+  ctx.font = '48px serif';
+  ctx.fillText('👹', W/2, 120);
+
+  ctx.font = 'bold 14px monospace';
+  ctx.fillStyle = '#ff9966';
+  ctx.fillText((bossName || 'ボス') + ' 討伐！', W/2, 148);
+
+  // Stats
+  ctx.font = '11px monospace';
+  ctx.fillStyle = '#aabbcc';
+  ctx.textAlign = 'left';
+  const statsX = 30;
+  ctx.fillText(`Lv. ${G.level}  正解: ${G.correct}問`, statsX, 175);
+  ctx.fillText(`コンボ最高: ${G.bestStreak}  ストリーク: ${G.loginStreak}日`, statsX, 195);
+
+  // Hashtag
+  ctx.font = '10px monospace';
+  ctx.fillStyle = '#5566aa';
+  ctx.textAlign = 'center';
+  ctx.fillText('#社労士クエスト 2026', W/2, 230);
+
+  // Info text
+  const textEl = document.getElementById('sharecard-text');
+  if (textEl) textEl.textContent = `#社労士クエスト で実力を試そう！\nシェアして仲間を増やそう！`;
+
+  ol.style.display = 'flex';
+}
+
+function downloadShareCard() {
+  const canvas = document.getElementById('sharecard-canvas');
+  if (!canvas) return;
+  const link  = document.createElement('a');
+  link.download = 'sharoushi-quest-boss.png';
+  link.href     = canvas.toDataURL('image/png');
+  link.click();
+}
+
+/* ================================================
+   ⑤ CHARACTER MOOD & EQUIPMENT
+   ================================================ */
+const MOOD_MAP = {
+  normal: { face: '😊', text: '快調！' },
+  happy:  { face: '✨', text: '絶好調！' },
+  sad:    { face: '😰', text: 'くじけるな…' },
+  fire:   { face: '🔥', text: 'コンボ中！' },
+  king:   { face: '👑', text: '無敵！' },
+};
+
+const EQUIP_MAP = [
+  { days:  0, body: '🧙‍♂️', label: '見習いローブ' },
+  { days:  3, body: '🎓',   label: '学習帽' },
+  { days:  7, body: '⚔️',   label: '知識の剣士' },
+  { days: 14, body: '🛡️',   label: '守護者' },
+  { days: 30, body: '👑',   label: '大賢者' },
+];
+
+function getEquipBody() {
+  const streak = G.loginStreak || 0;
+  let body = EQUIP_MAP[0].body;
+  for (const e of EQUIP_MAP) {
+    if (streak >= e.days) body = e.body;
+  }
+  return body;
+}
+
+function updateCharMood(mood) {
+  G.charMood = mood;
+  const m = MOOD_MAP[mood] || MOOD_MAP.normal;
+  const faceEl = document.getElementById('char-face');
+  const textEl = document.getElementById('char-mood-text');
+  if (faceEl) faceEl.textContent = m.face;
+  if (textEl) textEl.textContent = m.text;
+}
+
+function updateCharDisplay() {
+  const bodyEl = document.getElementById('char-body');
+  if (bodyEl) bodyEl.textContent = getEquipBody();
+}
+
+/* ================================================
+   ⑥ MOCK EXAM MODE
+   ================================================ */
+function showExamSetup() {
+  const ol = document.getElementById('overlay-exam-setup');
+  if (!ol) return;
+  // Reset selections
+  document.querySelectorAll('#exam-field-select .exam-setup-opt').forEach(b => {
+    b.classList.toggle('selected', b.dataset.field === '');
+  });
+  document.querySelectorAll('#exam-count-select .exam-setup-opt').forEach(b => {
+    b.classList.toggle('selected', b.dataset.count === '10');
+  });
+  // Wire up click handlers
+  document.querySelectorAll('#exam-field-select .exam-setup-opt').forEach(b => {
+    b.onclick = () => {
+      document.querySelectorAll('#exam-field-select .exam-setup-opt').forEach(x => x.classList.remove('selected'));
+      b.classList.add('selected');
+    };
+  });
+  document.querySelectorAll('#exam-count-select .exam-setup-opt').forEach(b => {
+    b.onclick = () => {
+      document.querySelectorAll('#exam-count-select .exam-setup-opt').forEach(x => x.classList.remove('selected'));
+      b.classList.add('selected');
+    };
+  });
+  ol.style.display = 'flex';
+}
+
+function startExamFromSetup() {
+  const fieldBtn = document.querySelector('#exam-field-select .exam-setup-opt.selected');
+  const countBtn = document.querySelector('#exam-count-select .exam-setup-opt.selected');
+  const field    = fieldBtn ? fieldBtn.dataset.field : '';
+  const count    = countBtn ? parseInt(countBtn.dataset.count) : 10;
+  document.getElementById('overlay-exam-setup').style.display = 'none';
+  startExam(field, count);
+}
+
+function startExam(field, count) {
+  // Stop any running exam timer
+  if (G._examTimerInterval) { clearInterval(G._examTimerInterval); G._examTimerInterval = null; }
+
+  G.examMode       = true;
+  G.examIdx        = 0;
+  G.examAnswers    = [];
+  G.examTimeLeft   = count === 10 ? 1200 : 2400;
+
+  // Build question pool
+  let pool = field ? QS.filter(q => q.f === field) : [...QS];
+  if (pool.length < count) pool = [...QS]; // fallback to all if not enough
+  pool = shuffle(pool).slice(0, count);
+  G.examQuestions  = pool;
+
+  show('screen-exam');
+  startExamTimer();
+  loadExamQuestion();
+}
+
+function startExamTimer() {
+  _updateExamTimerUI();
+  G._examTimerInterval = setInterval(() => {
+    G.examTimeLeft--;
+    _updateExamTimerUI();
+    if (G.examTimeLeft <= 0) {
+      clearInterval(G._examTimerInterval);
+      G._examTimerInterval = null;
+      showExamResult();
+    }
+  }, 1000);
+}
+
+function _updateExamTimerUI() {
+  const m   = Math.floor(G.examTimeLeft / 60);
+  const s   = G.examTimeLeft % 60;
+  const el  = document.getElementById('exam-timer');
+  if (el) el.textContent = `⏱ ${m}:${String(s).padStart(2,'0')}`;
+}
+
+function loadExamQuestion() {
+  const q = G.examQuestions[G.examIdx];
+  if (!q) { showExamResult(); return; }
+
+  const prog = document.getElementById('exam-progress');
+  if (prog) prog.textContent = `${G.examIdx + 1} / ${G.examQuestions.length}`;
+
+  const qEl = document.getElementById('exam-question');
+  if (qEl) qEl.textContent = `[${q.f}] ${q.q}`;
+
+  const cc = document.getElementById('exam-choices');
+  if (!cc) return;
+  cc.innerHTML = '';
+  q.ch.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className   = 'exam-choice-btn';
+    btn.textContent = c;
+    btn.onclick     = () => examAnswer(i);
+    cc.appendChild(btn);
+  });
+
+  const st = document.getElementById('exam-status');
+  if (st) st.textContent = '選択肢を選んでください';
+}
+
+function examAnswer(sel) {
+  const q = G.examQuestions[G.examIdx];
+  if (!q) return;
+
+  // Highlight selected
+  document.querySelectorAll('.exam-choice-btn').forEach((b, i) => {
+    if (i === sel) b.classList.add('selected');
+    b.onclick = null;
+  });
+
+  G.examAnswers.push({ qId: q.id, sel, ans: q.ans });
+
+  const st = document.getElementById('exam-status');
+  if (st) st.textContent = sel === q.ans ? '✅ 正解' : '❌ 不正解';
+
+  G.examIdx++;
+  if (G.examIdx >= G.examQuestions.length) {
+    setTimeout(() => showExamResult(), 600);
+  } else {
+    setTimeout(() => loadExamQuestion(), 500);
+  }
+}
+
+function showExamResult() {
+  if (G._examTimerInterval) { clearInterval(G._examTimerInterval); G._examTimerInterval = null; }
+  G.examMode = false;
+
+  const total   = G.examQuestions.length;
+  const correct = G.examAnswers.filter(a => a.sel === a.ans).length;
+  const pct     = total > 0 ? Math.round(correct / total * 100) : 0;
+
+  // show result screen (hides all SCREENS including screen-exam)
+  show('screen-exam-result');
+
+  const scoreEl = document.getElementById('exam-result-score');
+  if (scoreEl) scoreEl.textContent = `${correct} / ${total}  (${pct}%)`;
+
+  // Per-question breakdown
+  const detailEl = document.getElementById('exam-result-detail');
+  if (detailEl) {
+    let html = '';
+    G.examAnswers.forEach((a, i) => {
+      const q    = G.examQuestions[i];
+      const ok   = a.sel === a.ans;
+      const icon = ok ? '✅' : '❌';
+      const qtext = q ? q.q.substring(0, 40) + '…' : '';
+      html += `<div style="margin-bottom:4px;">${icon} ${i+1}. [${q ? q.f : ''}] ${qtext}</div>`;
+    });
+    detailEl.innerHTML = html || '回答なし';
+  }
+
+  const judgeEl = document.getElementById('exam-result-judge');
+  if (judgeEl) {
+    if (pct >= 70) {
+      judgeEl.className = 'exam-result-judge';
+      judgeEl.innerHTML = '🎉 合格圏！この調子で本試験も突破できそうです！';
+      G.cond.mockPassed = true;
+      checkAchievements();
+    } else if (pct >= 50) {
+      judgeEl.className = 'exam-result-judge near';
+      judgeEl.innerHTML = '📚 もう少し！あと少しで合格ラインです';
+    } else {
+      judgeEl.className = 'exam-result-judge fail';
+      judgeEl.innerHTML = '💪 要復習！重点分野を確認しましょう';
+    }
+  }
+}
+
+/* ================================================
    INIT
    ================================================ */
 updateUI();
 refreshTitleButtons();
 initDailyQuest();
+initLoginStreak();
+initWeeklyXP();
+updateReviewBadge();
+checkAchievements();
 </script>
 </body>
 </html>
