@@ -25,6 +25,368 @@ body {
   image-rendering: pixelated;
 }
 
+/* =========================================
+   SETTINGS — フォントサイズ・テーマ
+   ========================================= */
+/* ── Font size classes ── */
+body.fz-small  { font-size: 11px; }
+body.fz-medium { font-size: 13px; }
+body.fz-large  { font-size: 16px; }
+
+body.fz-small  .q-text,  body.fz-small  .choice-btn { font-size: 11px !important; }
+body.fz-medium .q-text,  body.fz-medium .choice-btn { font-size: 13px !important; }
+body.fz-large  .q-text,  body.fz-large  .choice-btn { font-size: 16px !important; }
+body.fz-small  .expl-box { font-size: 10px !important; }
+body.fz-medium .expl-box { font-size: 11px !important; }
+body.fz-large  .expl-box { font-size: 14px !important; }
+body.fz-small  .act-btn, body.fz-small  .nav-btn { font-size: 10px !important; }
+body.fz-medium .act-btn, body.fz-medium .nav-btn { font-size: 12px !important; }
+body.fz-large  .act-btn, body.fz-large  .nav-btn { font-size: 15px !important; }
+
+/* ── Light mode overrides ── */
+html.light-mode { background: #c8d0e8; }
+body.light-mode {
+  background: linear-gradient(180deg, #c8d0e8 0%, #dde5ff 100%);
+  color: #000830;
+}
+body.light-mode .dq-win {
+  background: #eaeeff;
+  border-color: #3355cc;
+}
+body.light-mode .dq-win::before {
+  border-color: rgba(30,60,200,0.18);
+}
+body.light-mode #screen-title {
+  background: linear-gradient(180deg, #b8c4e0 0%, #d0daff 45%, #c0ccf0 100%);
+  border-color: #3355cc;
+}
+body.light-mode #screen-battle {
+  background: #d8e0ff;
+  border-color: #3355cc;
+}
+body.light-mode .battle-field {
+  background: linear-gradient(180deg, #5878c0 0%, #809ae8 55%, #a8c870 100%) !important;
+}
+body.light-mode .bf-sky {
+  background: linear-gradient(180deg, #3860b0 0%, #6888d0 60%, #80a8e8 100%) !important;
+}
+body.light-mode .bf-stars { opacity: 0.15; }
+body.light-mode .bf-ground {
+  background:
+    repeating-linear-gradient(90deg, rgba(0,100,20,0.18) 0px, rgba(0,100,20,0.18) 1px, transparent 1px, transparent 16px),
+    repeating-linear-gradient(0deg, rgba(0,80,10,0.15) 0px, rgba(0,80,10,0.15) 1px, transparent 1px, transparent 16px),
+    linear-gradient(180deg, #68b038 0%, #488020 100%) !important;
+  border-top-color: #44cc20 !important;
+  box-shadow: 0 -1px 0 #88dd40 !important;
+}
+body.light-mode .q-box {
+  background: #eaedff;
+  border-color: #3355bb;
+}
+body.light-mode .q-text { color: #001050 !important; }
+body.light-mode .q-field-badge {
+  background: #c8d0f0;
+  border-color: #3355aa;
+  color: #002288 !important;
+}
+body.light-mode .choices { }
+body.light-mode .choice-btn {
+  background: #dde4ff !important;
+  border-color: #3355aa !important;
+  color: #001060 !important;
+}
+body.light-mode .choice-btn:hover {
+  background: #aabcff !important;
+  border-color: #1133bb !important;
+  color: #002299 !important;
+}
+body.light-mode .choice-btn::before { color: transparent !important; }
+body.light-mode .choice-btn:hover::before { color: #002299 !important; }
+body.light-mode .choice-btn.correct {
+  background: #ccf0cc !important;
+  border-color: #228822 !important;
+  color: #004400 !important;
+}
+body.light-mode .choice-btn.correct::before { color: #228822 !important; }
+body.light-mode .choice-btn.wrong {
+  background: #f0cccc !important;
+  border-color: #882222 !important;
+  color: #440000 !important;
+}
+body.light-mode .choice-btn.wrong::before { color: #882222 !important; }
+body.light-mode .expl-box {
+  background: #e8f0ff !important;
+  border-color: #3355aa !important;
+  color: #001050 !important;
+}
+body.light-mode .expl-title { color: #bb5500 !important; }
+body.light-mode .result-ok {
+  background: #cceecc !important;
+  border-color: #228822 !important;
+  color: #004400 !important;
+}
+body.light-mode .result-ng {
+  background: #eecccc !important;
+  border-color: #882222 !important;
+  color: #440000 !important;
+}
+body.light-mode .act-btn {
+  background: #c8d4f8 !important;
+  border-color: #3355bb !important;
+  color: #001060 !important;
+}
+body.light-mode .act-btn:hover { background: #8899ee !important; border-color: #1133aa !important; color: #fff !important; }
+body.light-mode .act-btn.primary { background: #f0d880 !important; border-color: #cc8800 !important; color: #553300 !important; }
+body.light-mode .act-btn.primary:hover { background: #e0c040 !important; color: #221100 !important; }
+body.light-mode .nav-bar { border-top-color: #3355aa !important; }
+body.light-mode .nav-btn {
+  background: #ccd4f0 !important;
+  border-right-color: #3355aa !important;
+  color: #223366 !important;
+}
+body.light-mode .nav-btn:hover { background: #99aaee !important; color: #000830 !important; }
+body.light-mode .hp-bar-wrap { background: #aab0d0 !important; }
+body.light-mode .monster-name { color: #440000 !important; }
+body.light-mode .logo-main { color: #001888 !important; text-shadow: 2px 2px 0 #aabbff !important; }
+body.light-mode .logo-sub  { color: #223377 !important; }
+body.light-mode .title-story { color: #112255 !important; background: rgba(180,200,255,0.6) !important; border-color: #3355cc !important; }
+body.light-mode .map-node { background: rgba(180,200,255,0.5) !important; border-color: #3355aa !important; color: #001055 !important; }
+body.light-mode .pixel-deco { border-color: #3355cc !important; }
+/* status / save / gameover screens */
+body.light-mode #screen-status,
+body.light-mode #screen-save,
+body.light-mode #screen-achievement,
+body.light-mode #screen-ranking,
+body.light-mode #screen-story {
+  background: #d0daff !important;
+  border-color: #3355cc !important;
+  color: #000830 !important;
+}
+body.light-mode .status-title,
+body.light-mode .save-title-text { color: #001888 !important; }
+body.light-mode .field-row-label { color: #112255 !important; }
+body.light-mode .field-bar-fill { }
+body.light-mode #screen-gameover {
+  background: linear-gradient(180deg, #c0a8a8 0%, #d8b0b0 100%) !important;
+  border-color: #883333 !important;
+}
+
+/* ── Settings floating button ── */
+#settings-fab {
+  position: fixed;
+  bottom: 18px;
+  right: 18px;
+  z-index: 8000;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #001a55;
+  border: 2px solid #4466bb;
+  color: #99aadd;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+  line-height: 1;
+}
+#settings-fab:hover { background: #002299; border-color: #88aaff; transform: scale(1.08) rotate(20deg); }
+body.light-mode #settings-fab {
+  background: #c8d4f8;
+  border-color: #3355bb;
+  color: #001060;
+  box-shadow: 0 2px 8px rgba(0,0,50,0.25);
+}
+
+/* ── Settings modal overlay ── */
+#settings-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: rgba(0,0,20,0.75);
+  align-items: center;
+  justify-content: center;
+}
+#settings-overlay.open { display: flex; }
+body.light-mode #settings-overlay { background: rgba(0,0,60,0.5); }
+
+/* ── Settings panel ── */
+#settings-panel {
+  background: #00004a;
+  border: 3px solid #6688ff;
+  padding: 0;
+  width: min(420px, 94vw);
+  position: relative;
+  animation: settings-pop 0.18s ease-out;
+}
+@keyframes settings-pop {
+  from { transform: scale(0.88); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+body.light-mode #settings-panel {
+  background: #eaedff;
+  border-color: #3355cc;
+  color: #000830;
+}
+#settings-panel::before {
+  content: '';
+  position: absolute;
+  top: 3px; left: 3px; right: 3px; bottom: 3px;
+  border: 1px solid rgba(120,160,255,0.25);
+  pointer-events: none;
+}
+.settings-header {
+  background: #000838;
+  border-bottom: 2px solid #4466bb;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+body.light-mode .settings-header {
+  background: #d0d8f8;
+  border-bottom-color: #3355bb;
+}
+.settings-title {
+  color: #aaccff;
+  font-size: 14px;
+  letter-spacing: 3px;
+}
+body.light-mode .settings-title { color: #001888; }
+#settings-close {
+  background: none;
+  border: 1px solid #4466bb;
+  color: #6688cc;
+  width: 26px;
+  height: 26px;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.12s;
+}
+#settings-close:hover { background: #440000; border-color: #ee4444; color: #ff8888; }
+body.light-mode #settings-close { border-color: #3355bb; color: #223377; }
+
+.settings-body { padding: 16px; display: flex; flex-direction: column; gap: 20px; }
+
+/* ── Settings section ── */
+.settings-section { display: flex; flex-direction: column; gap: 8px; }
+.settings-label {
+  color: #6688cc;
+  font-size: 10px;
+  letter-spacing: 2px;
+  border-bottom: 1px solid #223388;
+  padding-bottom: 4px;
+  margin-bottom: 2px;
+}
+body.light-mode .settings-label { color: #2244aa; border-bottom-color: #8899cc; }
+
+/* ── Font size selector ── */
+.fz-selector {
+  display: flex;
+  gap: 8px;
+}
+.fz-btn {
+  flex: 1;
+  background: #000838;
+  border: 2px solid #334488;
+  color: #6688cc;
+  padding: 10px 6px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.12s;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.fz-btn:hover { background: #001a55; border-color: #6688ff; color: #aaccff; }
+.fz-btn.active {
+  background: #002299;
+  border-color: #88aaff;
+  color: #ffee44;
+}
+body.light-mode .fz-btn { background: #d0d8f8; border-color: #3355aa; color: #223366; }
+body.light-mode .fz-btn:hover { background: #a8b8f0; border-color: #1133bb; color: #001060; }
+body.light-mode .fz-btn.active { background: #8899ee; border-color: #1133aa; color: #fff; }
+.fz-preview { pointer-events: none; }
+.fz-preview.sm { font-size: 11px; }
+.fz-preview.md { font-size: 14px; }
+.fz-preview.lg { font-size: 18px; }
+.fz-label { font-size: 9px; letter-spacing: 1px; }
+
+/* ── Theme selector ── */
+.theme-selector {
+  display: flex;
+  gap: 8px;
+}
+.theme-btn {
+  flex: 1;
+  border: 2px solid #334488;
+  padding: 12px 8px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.12s;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.theme-btn.dark-btn {
+  background: #000838;
+  color: #6688cc;
+}
+.theme-btn.light-btn {
+  background: #d0d8f8;
+  color: #223366;
+  border-color: #8899cc;
+}
+.theme-btn:hover { transform: translateY(-1px); }
+.theme-btn.active.dark-btn  { border-color: #88aaff; color: #ffee44; background: #001a55; }
+.theme-btn.active.light-btn { border-color: #1133bb; color: #001060; background: #aabcff; }
+.theme-icon { font-size: 28px; }
+.theme-name { font-size: 10px; letter-spacing: 2px; }
+
+/* ── Settings preview box ── */
+.settings-preview {
+  border: 2px solid #334488;
+  padding: 10px 12px;
+  background: #000428;
+  font-size: 12px;
+  line-height: 1.9;
+  color: #bbccee;
+}
+body.light-mode .settings-preview {
+  background: #e0e8ff;
+  border-color: #3355aa;
+  color: #001050;
+}
+.settings-preview-label {
+  color: #4466aa;
+  font-size: 9px;
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+body.light-mode .settings-preview-label { color: #2244aa; }
+
+/* ── Settings footer ── */
+.settings-footer {
+  border-top: 2px solid #223388;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+body.light-mode .settings-footer { border-top-color: #8899cc; }
+
 #game {
   width: 480px;
   max-width: 100%;
@@ -1853,6 +2215,71 @@ body {
 <body>
 <!-- Global CRT scanline overlay -->
 <div id="crt-overlay"></div>
+
+<!-- ⚙️ 設定フローティングボタン -->
+<button id="settings-fab" onclick="openSettings()" title="設定">⚙</button>
+
+<!-- ⚙️ 設定モーダル -->
+<div id="settings-overlay" onclick="handleSettingsOverlayClick(event)">
+  <div id="settings-panel">
+    <div class="settings-header">
+      <span class="settings-title">⚙ せってい</span>
+      <button id="settings-close" onclick="closeSettings()">✕</button>
+    </div>
+    <div class="settings-body">
+
+      <!-- テーマ選択 -->
+      <div class="settings-section">
+        <div class="settings-label">■ テーマ（昼・夜）</div>
+        <div class="theme-selector">
+          <button class="theme-btn dark-btn" id="theme-dark-btn" onclick="setTheme('dark')">
+            <span class="theme-icon">🌙</span>
+            <span class="theme-name">ダーク</span>
+          </button>
+          <button class="theme-btn light-btn" id="theme-light-btn" onclick="setTheme('light')">
+            <span class="theme-icon">☀️</span>
+            <span class="theme-name">ライト</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- フォントサイズ -->
+      <div class="settings-section">
+        <div class="settings-label">■ もじのおおきさ</div>
+        <div class="fz-selector">
+          <button class="fz-btn" id="fz-small-btn" onclick="setFontSize('small')">
+            <span class="fz-preview sm">あ</span>
+            <span class="fz-label">ちいさい</span>
+          </button>
+          <button class="fz-btn" id="fz-medium-btn" onclick="setFontSize('medium')">
+            <span class="fz-preview md">あ</span>
+            <span class="fz-label">ふつう</span>
+          </button>
+          <button class="fz-btn" id="fz-large-btn" onclick="setFontSize('large')">
+            <span class="fz-preview lg">あ</span>
+            <span class="fz-label">おおきい</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- プレビュー -->
+      <div class="settings-section">
+        <div class="settings-label">■ プレビュー</div>
+        <div class="settings-preview">
+          <div class="settings-preview-label">問題文のサンプル</div>
+          <div id="settings-preview-text">
+            労働者災害補償保険の保険者として<br>正しいものはどれか？<br>
+            <span style="opacity:0.7;font-size:0.85em;">A．政府　B．厚生労働大臣</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="settings-footer">
+      <button class="act-btn" onclick="closeSettings()" style="min-width:120px;">✔ とじる</button>
+    </div>
+  </div>
+</div>
 
 <div id="game">
 
@@ -6810,8 +7237,106 @@ function showExamResult() {
 }
 
 /* ================================================
+   SETTINGS — フォントサイズ・テーマ管理
+   ================================================ */
+const SETTINGS_KEY = 'sq_settings_v1';
+
+function loadSettingsData() {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    return raw ? JSON.parse(raw) : { theme: 'dark', fontSize: 'medium' };
+  } catch(e) {
+    return { theme: 'dark', fontSize: 'medium' };
+  }
+}
+
+function saveSettingsData(data) {
+  try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(data)); } catch(e) {}
+}
+
+function applySettings(settings) {
+  const body = document.body;
+  const html = document.documentElement;
+
+  // テーマ適用
+  if (settings.theme === 'light') {
+    body.classList.add('light-mode');
+    html.classList.add('light-mode');
+  } else {
+    body.classList.remove('light-mode');
+    html.classList.remove('light-mode');
+  }
+
+  // フォントサイズ適用
+  ['fz-small', 'fz-medium', 'fz-large'].forEach(c => body.classList.remove(c));
+  body.classList.add('fz-' + (settings.fontSize || 'medium'));
+
+  // UI ボタン状態を更新
+  updateSettingsUI(settings);
+}
+
+function updateSettingsUI(settings) {
+  // テーマボタン
+  const darkBtn  = document.getElementById('theme-dark-btn');
+  const lightBtn = document.getElementById('theme-light-btn');
+  if (darkBtn && lightBtn) {
+    darkBtn.classList.toggle('active',  settings.theme !== 'light');
+    lightBtn.classList.toggle('active', settings.theme === 'light');
+  }
+  // フォントサイズボタン
+  ['small','medium','large'].forEach(s => {
+    const el = document.getElementById('fz-' + s + '-btn');
+    if (el) el.classList.toggle('active', settings.fontSize === s);
+  });
+  // プレビューテキスト
+  const prev = document.getElementById('settings-preview-text');
+  if (prev) {
+    const sz = { small:'11px', medium:'13px', large:'16px' }[settings.fontSize || 'medium'];
+    prev.style.fontSize = sz;
+  }
+}
+
+function setTheme(theme) {
+  const s = loadSettingsData();
+  s.theme = theme;
+  saveSettingsData(s);
+  applySettings(s);
+}
+
+function setFontSize(size) {
+  const s = loadSettingsData();
+  s.fontSize = size;
+  saveSettingsData(s);
+  applySettings(s);
+}
+
+function openSettings() {
+  const overlay = document.getElementById('settings-overlay');
+  if (overlay) {
+    overlay.classList.add('open');
+    // 現在の設定で UI を同期
+    updateSettingsUI(loadSettingsData());
+  }
+}
+
+function closeSettings() {
+  const overlay = document.getElementById('settings-overlay');
+  if (overlay) overlay.classList.remove('open');
+}
+
+function handleSettingsOverlayClick(e) {
+  // パネル外クリックで閉じる
+  if (e.target === document.getElementById('settings-overlay')) {
+    closeSettings();
+  }
+}
+
+/* ================================================
    INIT
    ================================================ */
+// 設定を最初に適用（画面描画前）
+applySettings(loadSettingsData());
+
 updateUI();
 refreshTitleButtons();
 initDailyQuest();
