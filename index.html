@@ -1569,10 +1569,10 @@ body {
 
   <!-- Buttons -->
   <div style="display:flex;flex-direction:column;gap:10px;width:100%;z-index:1;">
-    <button id="btn-load-title" class="act-btn" onclick="showSaveScreen('load')" style="display:none;font-size:13px;padding:11px 36px;letter-spacing:3px;background:#001a44;border-color:#6688cc;">
+    <button id="btn-load-title" class="act-btn" onclick="continueStory()" style="display:none;font-size:13px;padding:11px 36px;letter-spacing:3px;background:#001a44;border-color:#6688cc;">
       📖 ぼうけんをよむ
     </button>
-    <button class="act-btn primary" onclick="startIntro()" style="font-size:14px;padding:12px 36px;letter-spacing:4px;">
+    <button class="act-btn primary" onclick="startNewStory()" style="font-size:14px;padding:12px 36px;letter-spacing:4px;">
       ⚡ NEW GAME　ぼうけんをはじめる
     </button>
   </div>
@@ -1782,10 +1782,10 @@ body {
 
   <!-- Nav bar -->
   <div class="nav-bar">
-    <button class="nav-btn" onclick="showBattle()">⚔ バトル</button>
+    <button class="nav-btn" onclick="showStoryMode()">📖 ストーリー</button>
     <button class="nav-btn" onclick="showWorldMap()">🗺 マップ</button>
     <button class="nav-btn" onclick="showAchievements()">🏆 実績</button>
-    <button class="nav-btn" onclick="showRanking()">👑 ランク</button>
+    <button class="nav-btn" onclick="showBattle()">🔄 自由訓練</button>
     <button class="nav-btn" onclick="showSaveScreen('save')">💾 セーブ</button>
   </div>
 </div>
@@ -1903,7 +1903,9 @@ body {
     </div>
   </div>
   <div class="story-footer">
-    <button class="story-btn" onclick="showBattle()">⚔ あとで</button>
+    <button class="story-btn" onclick="showSaveScreen('save')" style="flex:0 0 auto;padding:10px 12px;">💾</button>
+    <button class="story-btn" onclick="showAchievements()" style="flex:0 0 auto;padding:10px 12px;">🏆</button>
+    <button class="story-btn" onclick="showBattle()">🔄 自由訓練</button>
     <button class="story-btn primary" onclick="nextStory()" id="story-next-btn">つぎへ ▶</button>
   </div>
 </div>
@@ -3683,7 +3685,7 @@ function answer(sel) {
     // ⑥ Daily quest
     checkDailyProgress(q, true);
     // ⑧ Story mission
-    if (G.storyActive && _storyMissionField && q.f === _storyMissionField) {
+    if (G.storyActive && (_storyMissionField === null ? _storyMissionTarget > 0 : q.f === _storyMissionField)) {
       _storyMissionProgress++;
       if (_storyMissionProgress >= _storyMissionTarget) {
         G.storyActive = false;
@@ -4426,24 +4428,15 @@ function refreshTitleButtons() {
 
   if (autoData) {
     const acc = autoData.total > 0 ? Math.round(autoData.correct / autoData.total * 100) : 0;
+    const chIdx = autoData.storyChapter || 0;
+    const chInfo = STORY_CHAPTERS[chIdx] ? STORY_CHAPTERS[chIdx].title : '第1章';
     loadBtn.style.display = 'block';
-    loadBtn.innerHTML = `📖 ぼうけんをよむ<br><span style="font-size:9px;color:#8899aa;">${autoData.jobEmoji} ${autoData.job} / Lv.${autoData.level} / 正解${autoData.correct}問（${acc}%）</span>`;
-    loadBtn.onclick = () => {
-      if (confirm(`前回のデータを読み込みますか？\n（${autoData.savedAt}）`)) {
-        applyState(autoData);
-        updateUI();
-        updateJobDisplay();
-        G.currentQ = null;
-        queue = [];
-        qIdx  = 0;
-        startBattle();
-        showToast('📖 前回の冒険を再開！');
-      }
-    };
+    loadBtn.innerHTML = `📖 ぼうけんをよむ<br><span style="font-size:9px;color:#8899aa;">${autoData.jobEmoji} ${autoData.job} / Lv.${autoData.level} / ${chInfo}</span>`;
+    loadBtn.onclick = () => continueStory();
   } else if (anySlot) {
     loadBtn.style.display = 'block';
     loadBtn.innerHTML = '📖 ぼうけんをよむ';
-    loadBtn.onclick = () => showSaveScreen('load');
+    loadBtn.onclick = () => continueStory();
   } else {
     loadBtn.style.display = 'none';
   }
@@ -4978,31 +4971,177 @@ function renderRanking() {
    ⑧ STORY MODE SYSTEM
    ================================================ */
 const STORY_CHAPTERS = [
+  /* ── プロローグ ── */
   {
-    title: '第1章：旅立ちの朝',
+    id: 'prologue',
+    title: 'プロローグ：召喚の刻',
+    field: null,
     scenes: [
-      { npc:'🧓', name:'長老', text:'おお、待ちかねたぞ、若者よ。\nこの地では「社労士の知識」こそが魔物を退ける唯一の武器だ。\n法令の森にはろうき法の魔物が潜んでいる…\nまずは基礎から始めるがよい。' },
-      { npc:'📜', name:'賢者', text:'若き冒険者よ。\n労働基準法の第一歩は「法定労働時間」だ。\n1日8時間・1週40時間——この数字を体に叩き込め！\n「ハッパ（8・40）で働く！」と声に出して覚えよ。',
-        mission: '労基法の問題を3問正解しよう', field:'労基', target:3 },
-      { npc:'🧙‍♂️', name:'冒険者ギルドの長', text:'ふむ、なかなかやるではないか。\n三六協定の「月45時間・年360時間」の原則…\nよく覚えておけ。試験では必ずといっていいほど出題される！' },
+      { npc:'🧓', name:'長老',
+        text:'おお……ついに来たか、選ばれし者よ。\nこの世界は「労働と社会保険の法令」が支配する異世界じゃ。\n知識の剣を持たぬ者は、魔物どもに蹂躙されてしまう。\nそなたが倒すべき最後のボスは「社労士試験」——10の科目からなる大魔王じゃ！',
+        mission: null },
+      { npc:'📜', name:'賢者',
+        text:'旅の仲間を紹介しよう。\n⚔ 労働基準法・安衛法・労災・雇保——これらが「労働4法」の剣士たちだ。\n🛡 健保・厚年・国年・社一——これらが「社会保険4科目」の守護者たちだ。\n全8科目を制覇したとき、真の社労士への道が開ける！',
+        mission: null },
+      { npc:'🧙‍♂️', name:'冒険者ギルドの長',
+        text:'試験までの旅は長い。だが道は一歩ずつだ。\n各章でその科目の問題を5問正解すれば、次の章へ進む資格を得られる。\n正解するたびにEXPを積み、職業（ジョブ）も成長するぞ！\nさあ、第1章の「法令の森」へと踏み出せ！',
+        mission: null },
     ]
   },
+  /* ── 第1章 労基 ── */
   {
-    title: '第2章：安全の砦へ',
+    id: 'ch1',
+    title: '第1章：法令の森〜労働基準法',
+    field: '労基',
     scenes: [
-      { npc:'🏗️', name:'砦の守衛', text:'お前が噂の冒険者か。\nこの砦では労働安全衛生法が支配する。\n産業医・安全委員会・衛生委員会…\n50人という数字が鍵となる！', },
-      { npc:'⚙️', name:'安全の守護者', text:'常時50人以上の事業場では\n産業医・衛生管理者・衛生委員会の設置が義務じゃ。\n「ゴ（5）十人で安全体制！」この呪文を唱えよ！',
-        mission: '安衛法の問題を3問正解しよう', field:'安衛', target:3 },
-      { npc:'🧓', name:'長老', text:'よくぞここまで来た。\nボスを退けた力は本物だ。\n次は労災の谷が待っている。\n「業務遂行性」と「業務起因性」の2つを忘れるな！' },
+      { npc:'🌲', name:'森の守護者',
+        text:'ようこそ、法令の森へ。\nここは労働基準法の魔物が棲む場所だ。\n最も基本となる法律——1日8時間・1週40時間の「法定労働時間」を覚えよ。\n語呂は「ハッパ（8・40）で働く！」だ。',
+        mission: null },
+      { npc:'📜', name:'賢者',
+        text:'労基法の重要ポイントを伝授しよう。\n① 法定労働時間：1日8時間・1週40時間（労基法32条）\n② 三六協定：原則 月45時間・年360時間が上限\n③ 年次有給休暇：6ヶ月継続勤務＋8割出勤で10日付与\n④ 賃金：毎月1回以上・一定期日払いが原則\n⑤ 解雇予告：30日前予告または平均賃金30日分の手当が必要\nこれら5つが試験の頻出テーマだ！',
+        mission: '労基法の問題を5問正解せよ', field:'労基', target:5 },
+      { npc:'🏆', name:'森の守護者',
+        text:'見事じゃ！法令の森のボスを退けたな。\n三六協定の「特別条項」も忘れるなよ——年720時間・月100時間未満、複数月平均80時間以内。\n2019年4月から罰則付きで施行されたことも重要だ。\n次は安全の砦へ向かうがよい！',
+        mission: null },
     ]
   },
+  /* ── 第2章 安衛 ── */
   {
-    title: '第3章：年金の山の頂へ',
+    id: 'ch2',
+    title: '第2章：安全の砦〜労働安全衛生法',
+    field: '安衛',
     scenes: [
-      { npc:'⛰️', name:'山の賢老', text:'年金の山は険しい…\n厚生年金の標準報酬月額は32等級。\n健康保険の50等級と混同するな！\n「健保はゴジュウ（50）、厚年はサンジュウニ（32）」', },
-      { npc:'💊', name:'健保の守護神', text:'健康保険の傷病手当金は\n標準報酬日額の2/3、通算1年6ヶ月。\n2022年の改正で「通算」になったことを忘れずに！',
-        mission: '健保か厚年の問題を3問正解しよう', field:'健保', target:3 },
-      { npc:'👑', name:'社労士試験の守護神', text:'お前はついに頂上に立った！\nすべての科目を制覇する日は近い。\n諦めずに続けた者だけが、真の社労士となれる。\n最後まで戦い続けよ、勇者よ！' },
+      { npc:'🏗️', name:'砦の守衛',
+        text:'ここは安全の砦——労働安全衛生法の領域だ。\nこの法律は「労働者の安全と健康を守る」ことを目的とする。\n50人という数字が、この砦の要となるキーナンバーだ！\nまずは管理体制の仕組みを学べ。',
+        mission: null },
+      { npc:'⚙️', name:'安全の守護者',
+        text:'安衛法の5大ポイントを覚えよ！\n① 安全管理者：常時50人以上の製造業等で選任義務\n② 産業医：常時50人以上で選任義務（1000人以上は専属）\n③ 安全衛生委員会：50人以上で設置義務\n④ 定期健康診断：年1回（特定業務従事者は6ヶ月ごと）\n⑤ ストレスチェック：常時50人以上の事業場で年1回義務\n「ゴジュウ（50）人ですべてが動く！」',
+        mission: '安衛法の問題を5問正解せよ', field:'安衛', target:5 },
+      { npc:'🧓', name:'長老',
+        text:'ストレスチェックの集団分析は努力義務であることも覚えておくべし。\n産業医の選任要件は「14日以内」に所轄労基署長へ報告。\n健康診断の結果は「5年間保存」が原則だ。\n次の戦場——労災の谷でそなたの知識が試される！',
+        mission: null },
+    ]
+  },
+  /* ── 第3章 労災 ── */
+  {
+    id: 'ch3',
+    title: '第3章：労災の谷〜労働者災害補償保険法',
+    field: '労災',
+    scenes: [
+      { npc:'🔥', name:'谷の番人',
+        text:'この谷は「労災の谷」——労働者災害補償保険法の支配する地獄谷だ。\n仕事中に怪我や病気になったとき、国が補償する制度だ。\nまず覚えるべきは2つの認定要件——「業務遂行性」と「業務起因性」だ！',
+        mission: null },
+      { npc:'📜', name:'賢者',
+        text:'労災法の4大ポイントを伝える！\n① 業務遂行性：事業主の支配・管理下にあること\n② 業務起因性：業務と傷病の間に相当因果関係があること\n③ 特別加入：中小事業主・一人親方・海外派遣者も加入可能\n④ 通勤災害：住居と就業場所の往復・合理的な経路の逸脱は原則×\n「ロウ（遂行）・キ（起因）の2つで労災認定！」',
+        mission: '労災法の問題を5問正解せよ', field:'労災', target:5 },
+      { npc:'⚡', name:'谷の守護霊',
+        text:'通勤途中の「日常生活上必要な行為」による逸脱・中断は例外として認められる。\n買い物・通院・学校への送迎などがそれにあたる。\n給付の種類も重要——療養補償・休業補償・障害補償・遺族補償・傷病補償・介護補償・葬祭料。\n7種類をすべて覚えておくべし！',
+        mission: null },
+    ]
+  },
+  /* ── 第4章 雇保 ── */
+  {
+    id: 'ch4',
+    title: '第4章：雇用の街〜雇用保険法',
+    field: '雇保',
+    scenes: [
+      { npc:'🏠', name:'街の案内人',
+        text:'ようこそ雇用の街へ。ここは雇用保険法の領域。\n職を失った者、育児・介護で休む者を支援する制度だ。\n基本手当（失業給付）が主役だが、育児給付・高齢者給付も重要だぞ。',
+        mission: null },
+      { npc:'📜', name:'賢者',
+        text:'雇保法の4大ポイントだ！\n① 受給資格：離職前2年間に被保険者期間12ヶ月以上（特定受給資格者等は6ヶ月）\n② 給付制限：自己都合退職は原則2ヶ月（5年に2回以上は3ヶ月）\n③ 育児休業給付：180日まで67%・181日以降50%の支給率\n④ 高年齢雇用継続基本給付：60歳以上65歳未満・被保険者期間5年以上・75%未満に低下した者\n「ふつうは12ヶ月、くびなら6ヶ月！」',
+        mission: '雇用保険法の問題を5問正解せよ', field:'雇保', target:5 },
+      { npc:'👴', name:'老いた冒険者',
+        text:'育児給付の2025年改正にも注目せよ。\n男性育休の取得促進——出生時育児休業給付金は休業開始前賃金の最大80%相当！\n高年齢雇用継続給付は段階的に縮小されていく。\n改正情報は試験で必ず出るぞ。次は徴収法の砦へ！',
+        mission: null },
+    ]
+  },
+  /* ── 第5章 健保 ── */
+  {
+    id: 'ch5',
+    title: '第5章：健保の泉〜健康保険法',
+    field: '健保',
+    scenes: [
+      { npc:'💊', name:'泉の守護神',
+        text:'ここは健保の泉——健康保険法の聖域だ。\n病気・怪我・出産・死亡のとき、被保険者と家族を守る制度。\n「標準報酬月額」と「給付の種類」が試験の両輪だ！',
+        mission: null },
+      { npc:'📜', name:'賢者',
+        text:'健保法の3大ポイントを伝授する！\n① 標準報酬月額：第1等級（5万8千円）〜第50等級（139万円）の50等級制\n② 傷病手当金：標準報酬日額の2/3・通算1年6ヶ月（2022年改正で「通算」化）\n③ 高額療養費：自己負担限度額を超えた分を支給（年収による区分あり）\n「健保はゴジュウ（50）等級！」',
+        mission: '健康保険法の問題を5問正解せよ', field:'健保', target:5 },
+      { npc:'🏥', name:'院長',
+        text:'出産育児一時金は現在50万円（産科医療補償制度加算含む）。\n被扶養者の範囲——同居不要は配偶者・直系尊属・子・孫・兄弟姉妹。\n任意継続被保険者の要件「2ヶ月以上」と保険料算定方法も重要だ。\n次は厚生年金の山が待っている！',
+        mission: null },
+    ]
+  },
+  /* ── 第6章 厚年 ── */
+  {
+    id: 'ch6',
+    title: '第6章：年金の山〜厚生年金保険法',
+    field: '厚年',
+    scenes: [
+      { npc:'⛰️', name:'山の賢老',
+        text:'年金の山は険しいぞ……\n厚生年金保険法——民間サラリーマンや公務員が加入する2階建て年金の2階部分だ。\n健康保険の50等級に対して、厚年は32等級——この違いを絶対に混同するな！',
+        mission: null },
+      { npc:'📜', name:'賢者',
+        text:'厚年法の3大ポイントだ！\n① 標準報酬月額：第1等級（8万8千円）〜第32等級（65万円）の32等級制\n② 老齢厚生年金：65歳支給開始（繰上げ・繰下げ可、最大75歳まで繰下げ）\n③ 在職老齢年金：65歳以上は「支給停止調整額」を超えると年金が一部停止\n「健保はゴジュウ（50）、厚年はサンジュウニ（32）！」',
+        mission: '厚生年金保険法の問題を5問正解せよ', field:'厚年', target:5 },
+      { npc:'👑', name:'年金の王',
+        text:'加給年金・振替加算も重要だ。\n加給年金は配偶者・子がいる場合に老齢厚生年金に加算される。\n振替加算は配偶者が65歳になると老齢基礎年金に加算される仕組み。\n厚年の保険料率は18.3%——男女共通・固定されていることも覚えよ！',
+        mission: null },
+    ]
+  },
+  /* ── 第7章 国年 ── */
+  {
+    id: 'ch7',
+    title: '第7章：国年の大地〜国民年金法',
+    field: '国年',
+    scenes: [
+      { npc:'🌍', name:'大地の精霊',
+        text:'ここは国年の大地——国民年金法の領域だ。\n日本に住む20歳以上60歳未満のすべての者が加入する「1階建て年金」の基盤。\n被保険者の種別が最重要のポイントだ！',
+        mission: null },
+      { npc:'📜', name:'賢者',
+        text:'国年法の3大ポイントを覚えよ！\n① 被保険者種別：第1号（自営業等）・第2号（厚年・共済加入者）・第3号（第2号の被扶養配偶者）\n② 保険料：第1号被保険者は定額（2026年度：月16,980円）、第2号は標準報酬に比例\n③ 老齢基礎年金：10年以上の受給資格期間で65歳から支給（最大816,000円／年）\n「いちごうにごさんごう——3種類の被保険者！」',
+        mission: '国民年金法の問題を5問正解せよ', field:'国年', target:5 },
+      { npc:'🧓', name:'長老',
+        text:'免除制度も試験頻出だ。\n法定免除・申請免除・学生納付特例・納付猶予——4種類を区別せよ。\n免除期間の年金額への反映割合（全額免除は1/2）も覚えること。\nいよいよ最終章——社会保険横断の試練が待っているぞ！',
+        mission: null },
+    ]
+  },
+  /* ── 第8章 社一 ── */
+  {
+    id: 'ch8',
+    title: '第8章：改正の城〜社会保険一般常識',
+    field: '社一',
+    scenes: [
+      { npc:'🏰', name:'城の守門将',
+        text:'最後の難関——改正の城へようこそ。\n社会保険一般常識は「横断整理」と「法改正」が命だ。\n各科目の横断比較を頭に叩き込み、最新の改正情報を身につけよ！',
+        mission: null },
+      { npc:'📜', name:'賢者',
+        text:'横断整理の鍵ポイントだ！\n① 標準報酬月額の等級：健保50等級 vs 厚年32等級\n② 時効：賃金2年・労災5年・健保2年・国年5年（詐欺等は10年）\n③ 保険料負担：健保・厚年は労使折半、労災は事業主全額、雇保は労使双方\n④ 2025〜2026年主要改正：育児給付拡充・高年齢給付縮小・年収の壁対応\n「試験は改正点が8割の確率で出る！」',
+        mission: '社労士横断問題を5問正解せよ', field:null, target:5 },
+      { npc:'👹', name:'大魔王・改正の番人',
+        text:'よくぞここまで来た……だが最後の試練を超えなければ合格はない！\n社一の範囲は労働契約法・最低賃金法・男女雇用機会均等法・育介法など多数。\n「関連法令の横断」と「白書・統計」も出題される。\n全力で挑め——社労士試験の本番に向けて！',
+        mission: null },
+    ]
+  },
+  /* ── エピローグ ── */
+  {
+    id: 'epilogue',
+    title: 'エピローグ：試験の日',
+    field: null,
+    scenes: [
+      { npc:'🧙‍♂️', name:'冒険者（あなた）',
+        text:'……試験当日の朝。\n窓の外には青空が広がっている。\nあの日から旅を続けて、どれだけ遠くまで来たことだろう。\n労基・安衛・労災・雇保・健保・厚年・国年・社一——8つの科目と戦い抜いた。',
+        mission: null },
+      { npc:'📜', name:'賢者',
+        text:'よく頑張った、冒険者よ。\n知識は剣となり、理解は盾となり、そなたを守るだろう。\n試験会場に入るとき、このことを思い出せ——\n「一問一問、丁寧に。焦らず、諦めず、最後まで。」\n全力を出し切れば、結果は必ずついてくる！',
+        mission: null },
+      { npc:'🧓', name:'長老',
+        text:'合格の報告を楽しみに待っておるぞ。\nたとえ今回が最初の挑戦でなくとも、続けた者だけが合格できる。\nそなたの旅は終わらない——合格の先にも社労士としての道が続く。\n行け、勇者よ！社労士クエストのボスを倒してこい！！',
+        mission: null },
+      { npc:'⭐', name:'システム',
+        text:'おめでとうございます！\nすべての章をクリアしました。\n自由訓練モードで全科目の問題を繰り返し練習して、\n本番に備えましょう！\n\nあなたの合格を、心よりお祈りしています。',
+        mission: null },
     ]
   },
 ];
@@ -5012,6 +5151,32 @@ let _storyScene   = 0;
 let _storyMissionProgress = 0;
 let _storyMissionTarget   = 0;
 let _storyMissionField    = null;
+
+function startNewStory() {
+  G.storyChapter = 0;
+  G.storyScene   = 0;
+  G.storyActive  = true;
+  _storyChapter  = 0;
+  _storyScene    = 0;
+  _storyMissionProgress = 0;
+  showStoryMode();
+}
+
+function continueStory() {
+  const autoData = loadFromSlot(AUTO_SLOT);
+  if (autoData) {
+    applyState(autoData);
+    updateUI();
+    updateJobDisplay();
+    _storyChapter = G.storyChapter || 0;
+    _storyScene   = G.storyScene   || 0;
+    G.storyActive = true;
+    showStoryMode();
+    showToast('📖 前回の冒険を再開！');
+  } else {
+    startNewStory();
+  }
+}
 
 function showStoryMode() {
   _storyChapter = G.storyChapter || 0;
@@ -5050,14 +5215,19 @@ function renderStoryScene() {
 }
 
 function startStoryMission() {
-  // Filter queue to story mission field
+  G.currentQ = null;
+  G.storyActive = true;
   if (_storyMissionField) {
+    // Field-specific mission
     const pool = QS.filter(q => q.f === _storyMissionField);
     queue = shuffle(pool);
     qIdx  = 0;
-    G.currentQ = null;
-    G.storyActive = true;
     setMsg(`📖 ストーリーミッション！\n「${_storyMissionField}」の問題を${_storyMissionTarget}問正解しよう！`);
+  } else {
+    // All-field mission (横断)
+    queue = buildQueue();
+    qIdx  = 0;
+    setMsg(`📖 ストーリーミッション！\n全科目から${_storyMissionTarget}問正解しよう！`);
   }
   showBattle();
 }
@@ -5089,19 +5259,6 @@ function closeStoryMode() {
 updateUI();
 refreshTitleButtons();
 initDailyQuest();
-// Add Story Mode button to title screen
-(function() {
-  const container = document.querySelector('#screen-title > div[style*="flex-direction:column"]');
-  if (container && !document.getElementById('btn-story')) {
-    const btn = document.createElement('button');
-    btn.id = 'btn-story';
-    btn.className = 'act-btn';
-    btn.style.cssText = 'font-size:12px;padding:10px 36px;letter-spacing:2px;background:#110033;border-color:#8855ff;color:#aa88ff;';
-    btn.innerHTML = '📖 ストーリーモード';
-    btn.onclick = showStoryMode;
-    container.appendChild(btn);
-  }
-})();
 </script>
 </body>
 </html>
