@@ -1848,11 +1848,199 @@ body {
   cursor: pointer;
   text-align: center;
 }
+
+/* =========================================
+   SETTINGS — gear icon button
+   ========================================= */
+#settings-btn {
+  position: absolute;
+  top: 10px; right: 10px;
+  background: rgba(0,0,80,0.7);
+  border: 2px solid #6688ff;
+  color: #aabbff;
+  font-size: 18px;
+  width: 38px; height: 38px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 10;
+  transition: background 0.2s;
+}
+#settings-btn:hover { background: rgba(40,40,160,0.9); }
+
+/* Settings overlay */
+#settings-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+}
+#settings-overlay.open { display: flex; }
+
+#settings-panel {
+  background: #00004a;
+  border: 3px solid #6688ff;
+  padding: 20px 24px 24px;
+  width: min(420px, 92vw);
+  font-family: 'DotGothic16','ＭＳ ゴシック',monospace;
+  position: relative;
+}
+#settings-panel::before {
+  content:'';
+  position:absolute;
+  top:3px;left:3px;right:3px;bottom:3px;
+  border:1px solid rgba(120,160,255,0.25);
+  pointer-events:none;
+}
+.settings-title {
+  color: #ffee44;
+  font-size: 15px;
+  letter-spacing: 3px;
+  text-align: center;
+  border-bottom: 2px solid #6688ff;
+  padding-bottom: 10px;
+  margin-bottom: 18px;
+}
+.settings-row {
+  margin-bottom: 18px;
+}
+.settings-label {
+  color: #aabbff;
+  font-size: 12px;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.settings-btns {
+  display: flex;
+  gap: 8px;
+}
+.settings-opt {
+  flex: 1;
+  background: #000030;
+  border: 2px solid #334488;
+  color: #7788cc;
+  font-family: inherit;
+  font-size: 12px;
+  padding: 8px 4px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+.settings-opt:hover { border-color: #6688ff; color: #aabbff; }
+.settings-opt.active {
+  background: #001060;
+  border-color: #ffee44;
+  color: #ffee44;
+}
+.settings-close {
+  width: 100%;
+  margin-top: 8px;
+  background: #001060;
+  border: 2px solid #6688ff;
+  color: #aabbff;
+  font-family: inherit;
+  font-size: 13px;
+  letter-spacing: 3px;
+  padding: 10px;
+  cursor: pointer;
+}
+.settings-close:hover { background: #002080; }
+
+/* =========================================
+   FONT SIZE VARIANTS
+   ========================================= */
+body.fz-small  #game { zoom: 0.88; transform-origin: top center; }
+body.fz-large  #game { zoom: 1.14; transform-origin: top center; }
+
+/* =========================================
+   LIGHT MODE
+   ========================================= */
+body.light-mode {
+  background: radial-gradient(ellipse at center, #dde4f8 0%, #c8d4f0 100%);
+  color: #111;
+}
+body.light-mode #crt-overlay { display: none; }
+body.light-mode .dq-win {
+  background: #eef0ff;
+  border-color: #4466cc;
+  color: #111;
+}
+body.light-mode .dq-win::before { border-color: rgba(40,80,200,0.2); }
+body.light-mode #screen-title {
+  background: linear-gradient(180deg,#c8d8ff 0%,#dde8ff 45%,#ccd8ff 100%);
+  border-color: #4466cc;
+  color: #111;
+}
+body.light-mode .logo-main { color: #1133aa; text-shadow: 2px 2px 0 #8899ff; }
+body.light-mode .logo-sub  { color: #3355bb; }
+body.light-mode .title-story { color: #334466; }
+body.light-mode .act-btn {
+  background: #ccd8ff;
+  border-color: #4466cc;
+  color: #1133aa;
+}
+body.light-mode .act-btn.primary {
+  background: #3355cc;
+  color: #fff;
+  border-color: #2244bb;
+}
+body.light-mode .act-btn:hover { background: #bbccff; }
+body.light-mode .act-btn.primary:hover { background: #2244bb; }
+body.light-mode #screen-battle {
+  background: linear-gradient(180deg,#c0ccee 0%,#d8e0ff 100%);
+}
+body.light-mode .msg-win {
+  background: #eef0ff;
+  border-color: #4466cc;
+  color: #111;
+}
+body.light-mode .choice-btn {
+  background: #dde4ff;
+  border-color: #4466cc;
+  color: #112244;
+}
+body.light-mode .choice-btn:hover { background: #c8d4ff; }
+body.light-mode .hud-bar { background: #ccd4ee; border-color: #4466cc; color:#111; }
+body.light-mode .status-win { background: #eef0ff; border-color: #4466cc; color: #111; }
+body.light-mode #settings-btn {
+  background: rgba(200,210,255,0.9);
+  border-color: #4466cc;
+  color: #2244aa;
+}
 </style>
 </head>
 <body>
 <!-- Global CRT scanline overlay -->
 <div id="crt-overlay"></div>
+
+<!-- Settings overlay (outside #game, fixed position) -->
+<div id="settings-overlay">
+  <div id="settings-panel">
+    <div class="settings-title">⚙ せってい</div>
+
+    <div class="settings-row">
+      <div class="settings-label">🔤 文字サイズ</div>
+      <div class="settings-btns">
+        <button class="settings-opt" id="sq-fz-small"  onclick="setSetting('fontSize','small')">小</button>
+        <button class="settings-opt" id="sq-fz-medium" onclick="setSetting('fontSize','medium')">中（標準）</button>
+        <button class="settings-opt" id="sq-fz-large"  onclick="setSetting('fontSize','large')">大</button>
+      </div>
+    </div>
+
+    <div class="settings-row">
+      <div class="settings-label">🌙 テーマ</div>
+      <div class="settings-btns">
+        <button class="settings-opt" id="sq-theme-dark"  onclick="setSetting('theme','dark')">🌙 ダーク</button>
+        <button class="settings-opt" id="sq-theme-light" onclick="setSetting('theme','light')">☀ ライト</button>
+      </div>
+    </div>
+
+    <button class="settings-close" onclick="closeSettings()">▶ とじる</button>
+  </div>
+</div>
 
 <div id="game">
 
@@ -1860,6 +2048,7 @@ body {
      TITLE SCREEN
 ═══════════════════════════════════════ -->
 <div id="screen-title">
+  <button id="settings-btn" onclick="openSettings()" title="せってい">⚙</button>
   <div class="title-stars"></div>
   <div class="pixel-deco"></div>
 
@@ -6813,8 +7002,76 @@ function showExamResult() {
 }
 
 /* ================================================
+   SETTINGS SYSTEM
+   ================================================ */
+const SQ_SETTINGS_KEY = 'sq_settings_v2';
+let _sqSettings = { theme: 'dark', fontSize: 'medium' };
+
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem(SQ_SETTINGS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed.theme)    _sqSettings.theme    = parsed.theme;
+      if (parsed.fontSize) _sqSettings.fontSize = parsed.fontSize;
+    }
+  } catch(e) { /* ignore */ }
+  applySettings();
+}
+
+function applySettings() {
+  const body = document.body;
+  /* theme */
+  body.classList.toggle('light-mode', _sqSettings.theme === 'light');
+  /* font size */
+  body.classList.remove('fz-small','fz-medium','fz-large');
+  body.classList.add('fz-' + _sqSettings.fontSize);
+}
+
+function saveSettingsData() {
+  try {
+    localStorage.setItem(SQ_SETTINGS_KEY, JSON.stringify(_sqSettings));
+  } catch(e) { /* ignore */ }
+}
+
+function setSetting(key, value) {
+  _sqSettings[key] = value;
+  saveSettingsData();
+  applySettings();
+  renderSettingsUI();
+}
+
+function renderSettingsUI() {
+  const fzIds    = ['small','medium','large'];
+  const themeIds = ['dark','light'];
+  fzIds.forEach(v => {
+    const el = document.getElementById('sq-fz-' + v);
+    if (el) el.classList.toggle('active', _sqSettings.fontSize === v);
+  });
+  themeIds.forEach(v => {
+    const el = document.getElementById('sq-theme-' + v);
+    if (el) el.classList.toggle('active', _sqSettings.theme === v);
+  });
+}
+
+function openSettings() {
+  renderSettingsUI();
+  document.getElementById('settings-overlay').classList.add('open');
+}
+
+function closeSettings() {
+  document.getElementById('settings-overlay').classList.remove('open');
+}
+
+/* Close settings overlay when clicking outside the panel */
+document.getElementById('settings-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeSettings();
+});
+
+/* ================================================
    INIT
    ================================================ */
+loadSettings();
 updateUI();
 refreshTitleButtons();
 initDailyQuest();
